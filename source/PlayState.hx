@@ -1113,7 +1113,6 @@ class PlayState extends MusicBeatState
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = true;
-		add(scoreTxt);
 
 		replayTxt = new FlxText(healthBarBG.x + healthBarBG.width / 2 - 75, healthBarBG.y + (FlxG.save.data.downscroll ? 100 : -100), 0, "REPLAY", 20);
 		replayTxt.setFormat(Paths.font("vcr.ttf"), 42, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1130,6 +1129,7 @@ class PlayState extends MusicBeatState
 		iconP2 = new HealthIcon(SONG.player2, false);
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 		add(iconP2);
+		add(scoreTxt);
 
 		strumLineNotes.cameras = [camHUD];
 		notes.cameras = [camHUD];
@@ -3727,6 +3727,17 @@ class PlayState extends MusicBeatState
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition);
 
 		note.rating = Ratings.CalculateRating(noteDiff);
+
+		if(scoreTxtTween != null) {
+			scoreTxtTween.cancel();
+		}
+		scoreTxt.scale.x = 1.075;
+		scoreTxt.scale.y = 1.075;
+		scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
+			onComplete: function(twn:FlxTween) {
+				scoreTxtTween = null;
+			}
+		});
 
 		if (!note.isSustainNote)
 			notesHitArray.push(Date.now());
