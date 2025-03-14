@@ -128,7 +128,7 @@ class Character extends FlxSprite
 				// DAD ANIMATION LOADING CODE
 				tex = Paths.getSparrowAtlas('DADDY_DEAREST','shared');
 				frames = tex;
-				iconColor = 'FF';
+				iconColor = 'FFBF7FD4';
 				animation.addByPrefix('idle', 'Dad idle dance', 24);
 				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
 				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
@@ -184,7 +184,7 @@ class Character extends FlxSprite
 			case 'mom-car':
 				tex = Paths.getSparrowAtlas('momCar');
 				frames = tex;
-
+                iconColor = 'FFD8558E';
 				animation.addByPrefix('idle', "Mom Idle", 24, false);
 				animation.addByPrefix('singUP', "Mom Up Pose", 24, false);
 				animation.addByPrefix('singDOWN', "MOM DOWN POSE", 24, false);
@@ -203,6 +203,7 @@ class Character extends FlxSprite
 			case 'monster':
 				tex = Paths.getSparrowAtlas('Monster_Assets');
 				frames = tex;
+				iconColor = 'FFF2FF6F';
 				animation.addByPrefix('idle', 'monster idle', 24, false);
 				animation.addByPrefix('singUP', 'monster up note', 24, false);
 				animation.addByPrefix('singDOWN', 'monster down', 24, false);
@@ -233,6 +234,7 @@ class Character extends FlxSprite
 			case 'pico':
 				tex = Paths.getSparrowAtlas('Pico_FNF_assetss');
 				frames = tex;
+				iconColor = 'FFBBDA59';
 				animation.addByPrefix('idle', "Pico Idle Dance", 24);
 				animation.addByPrefix('singUP', 'pico Up note0', 24, false);
 				animation.addByPrefix('singDOWN', 'Pico Down Note0', 24, false);
@@ -272,6 +274,7 @@ class Character extends FlxSprite
 			case 'bf':
 				var tex = Paths.getSparrowAtlas('BOYFRIEND','shared');
 				frames = tex;
+				iconColor = 'FF35B4D3';
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
 				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
@@ -339,6 +342,7 @@ class Character extends FlxSprite
 			case 'bf-car':
 				var tex = Paths.getSparrowAtlas('bfCar');
 				frames = tex;
+				iconColor = 'FF31B0D1';
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
 				animation.addByPrefix('singLEFT', 'BF NOTE LEFT0', 24, false);
@@ -363,6 +367,7 @@ class Character extends FlxSprite
 				flipX = true;
 			case 'bf-pixel':
 				frames = Paths.getSparrowAtlas('weeb/bfPixel');
+				iconColor = 'FF7BD6F5';
 				animation.addByPrefix('idle', 'BF IDLE', 24, false);
 				animation.addByPrefix('singUP', 'BF UP NOTE', 24, false);
 				animation.addByPrefix('singLEFT', 'BF LEFT NOTE', 24, false);
@@ -414,6 +419,7 @@ class Character extends FlxSprite
 
 			case 'senpai':
 				frames = Paths.getSparrowAtlas('weeb/senpai');
+				iconColor = 'FFFFAB6F';
 				animation.addByPrefix('idle', 'Senpai Idle', 24, false);
 				animation.addByPrefix('singUP', 'SENPAI UP NOTE', 24, false);
 				animation.addByPrefix('singLEFT', 'SENPAI LEFT NOTE', 24, false);
@@ -454,6 +460,7 @@ class Character extends FlxSprite
 
 			case 'spirit':
 				frames = Paths.getPackerAtlas('weeb/spirit');
+				iconColor = 'FFFE3C6E';
 				animation.addByPrefix('idle', "idle spirit_", 24, false);
 				animation.addByPrefix('singUP', "up_", 24, false);
 				animation.addByPrefix('singRIGHT', "right_", 24, false);
@@ -480,6 +487,7 @@ class Character extends FlxSprite
 				animation.addByPrefix('singDOWN', 'Parent Down Note Dad', 24, false);
 				animation.addByPrefix('singLEFT', 'Parent Left Note Dad', 24, false);
 				animation.addByPrefix('singRIGHT', 'Parent Right Note Dad', 24, false);
+				iconColor = 'FFAE66CE';
 
 				animation.addByPrefix('singUP-alt', 'Parent Up Note Mom', 24, false);
 
@@ -549,6 +557,7 @@ class Character extends FlxSprite
 		{
 			case 'gf':
 				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
+					iconColor = 'FFA4004D';
 					playAnim('danceRight');
 		}
 
@@ -611,6 +620,7 @@ class Character extends FlxSprite
 
 				case 'spooky':
 					danced = !danced;
+					iconColor = 'FFD67F00';
 
 					if (danced)
 						playAnim('danceRight');
