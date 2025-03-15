@@ -29,7 +29,7 @@ class StrumNote extends FlxSprite
 		if (resetAnim > 0)
 		{
 			resetAnim -= elapsed;
-			if (resetAnim < 0)
+			if (resetAnim < 0.00001)
 			{
 				resetAnim = 0;
 				playAnim("static");
