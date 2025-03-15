@@ -141,6 +141,8 @@ class Note extends FlxSprite
 			multAlpha = 0.6;
 
 			x += width / 2;
+			var sustainScaleY:Float = !PlayState.curStage.startsWith('school') ? 0.7 : PlayState.daPixelZoom;
+			var susMultScale:Float = !PlayState.curStage.startsWith('school') ? 1.5 : 1.246;
 
 			switch (noteData)
 			{
@@ -154,6 +156,8 @@ class Note extends FlxSprite
 					animation.play('purpleholdend');
 			}
 
+			if (!PlayState.curStage.startsWith('school'))
+				scale.y = 1;
 			updateHitbox();
 
 			x -= width / 2;
@@ -175,7 +179,7 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.5 * PlayState.SONG.speed;
+				prevNote.scale.y = sustainScaleY * Conductor.stepCrochet / 100 * susMultScale * PlayState.SONG.speed;
 				prevNote.updateHitbox();
 				// prevNote.setGraphicSize();
 			}
@@ -202,7 +206,11 @@ class Note extends FlxSprite
 		{
 			canBeHit = false;
 
-			if (strumTime <= Conductor.songPosition)
+			if (strumTime <= Conductor.songPosition
+				|| isSustainNote
+				&& (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
+					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
+				&& prevNote.wasGoodHit)
 				wasGoodHit = true;
 		}
 
@@ -212,12 +220,16 @@ class Note extends FlxSprite
 				alpha = 0.3;
 		}
 	}
+
 	public var ignoreNote:Bool = false;
 	public var hitByOpponent:Bool = false;
 
 	public function clipToStrumNote(myStrum:StrumNote)
 	{
-		var center:Float = myStrum.y + 0 + swagWidth / 2;
+		if (FlxG.save.data.downscroll && isSustainNote)
+			y -= (frameHeight * scale.y) - (swagWidth);
+
+		var center:Float = myStrum.y + 0 + myStrum.height / 2;
 		if ((mustPress || !ignoreNote) && (wasGoodHit || (prevNote.wasGoodHit && !canBeHit)))
 		{
 			var swagRect:FlxRect = clipRect;
@@ -239,7 +251,7 @@ class Note extends FlxSprite
 				swagRect.width = width / scale.x;
 				swagRect.height = (height / scale.y) - swagRect.y;
 			}
-			clipRect = swagRect;
+			clipRect = swagRect.getRotatedBounds(angle, origin); // allows for directional modcharts to not break the arrows
 		}
 	}
 
