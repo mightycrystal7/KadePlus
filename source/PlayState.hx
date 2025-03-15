@@ -3089,15 +3089,13 @@ class PlayState extends MusicBeatState
 
 	private function popUpScore(daNote:Note):Void
 	{
-		if (cpuControlled)
-		{
-			if (health < 2)
-				health += 0.1;
-		}
 		var noteDiff:Float = Math.abs(Conductor.songPosition - daNote.strumTime);
 		var wife:Float = EtternaFunctions.wife3(noteDiff, Conductor.timeScale);
 		// boyfriend.playAnim('hey');
 		vocals.volume = 1;
+
+		if (curSong == 'Takeover')
+			health += 0.015;
 
 		var placement:String = Std.string(combo);
 
@@ -3124,6 +3122,7 @@ class PlayState extends MusicBeatState
 					score = -300;
 					combo = 0;
 					misses++;
+					if (SONG.song.toLowerCase() != 'lights-down' && curSong != 'Takeover')
 					health -= 0.2;
 					ss = false;
 					shits++;
@@ -3132,6 +3131,7 @@ class PlayState extends MusicBeatState
 				case 'bad':
 					daRating = 'bad';
 					score = 0;
+					if (SONG.song.toLowerCase() != 'lights-down' && curSong != 'Takeover')
 					health -= 0.06;
 					ss = false;
 					bads++;
@@ -3142,12 +3142,12 @@ class PlayState extends MusicBeatState
 					score = 200;
 					ss = false;
 					goods++;
-					if (health < 2)
+					if (health < 2 && SONG.song.toLowerCase() != 'lights-down' && curSong != 'Takeover')
 						health += 0.04;
 					if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 0.75;
 				case 'sick':
-					if (health < 2)
+					if (health < 2 && SONG.song.toLowerCase() != 'lights-down' && curSong != 'Takeover')
 						health += 0.1;
 					if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 1;
@@ -3695,6 +3695,9 @@ class PlayState extends MusicBeatState
 
 		if (resetMashViolation || cpuControlled)
 			mashViolations--;
+
+		if(SONG.song.toLowerCase() == 'lights-down')
+			health += 0.02;
 
 		if (!note.wasGoodHit)
 		{
