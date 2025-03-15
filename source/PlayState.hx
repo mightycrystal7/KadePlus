@@ -42,6 +42,7 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxSound;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -121,8 +122,8 @@ class PlayState extends MusicBeatState
 
 	private static var prevCamFollow:FlxObject;
 
-	private var strumLineNotes:FlxTypedGroup<StrumNote>;
-	private var playerStrums:FlxTypedGroup<StrumNote>;
+	private var strumLineNotes:FlxTypedSpriteGroup<StrumNote>;
+	private var playerStrums:FlxTypedSpriteGroup<StrumNote>;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -1023,10 +1024,10 @@ class PlayState extends MusicBeatState
 		if (FlxG.save.data.downscroll)
 			strumLine.y = FlxG.height - 165;
 
-		strumLineNotes = new FlxTypedGroup<StrumNote>();
+		strumLineNotes = new FlxTypedSpriteGroup<StrumNote>();
 		add(strumLineNotes);
 
-		playerStrums = new FlxTypedGroup<StrumNote>();
+		playerStrums = new FlxTypedSpriteGroup<StrumNote>();
 
 		// startCountdown();
 
@@ -1046,7 +1047,7 @@ class PlayState extends MusicBeatState
 
 		add(camFollow);
 
-		FlxG.camera.follow(camFollow, LOCKON, 0.04 * (30 / (cast(Lib.current.getChildAt(0), Main)).getFPS()));
+		FlxG.camera.follow(camFollow, LOCKON, 0.04);
 		// FlxG.camera.setScrollBounds(0, FlxG.width, 0, FlxG.height);
 		FlxG.camera.zoom = defaultCamZoom;
 		FlxG.camera.focusOn(camFollow.getPosition());
@@ -1922,7 +1923,8 @@ class PlayState extends MusicBeatState
 				{
 					oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
-					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + Conductor.stepCrochet, daNoteData, oldNote, true);
+					var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / SONG.speed), daNoteData,
+						oldNote, true);
 					sustainNote.scrollFactor.set();
 					unspawnNotes.push(sustainNote);
 
@@ -2054,7 +2056,7 @@ class PlayState extends MusicBeatState
 			if (player == 1)
 			{
 				playerStrums.add(babyArrow);
-				babyArrow.x += Note.swagWidth / 2;
+				babyArrow.x += Note.swagWidth;
 			}
 
 			babyArrow.playAnim('static');
@@ -2410,10 +2412,12 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
-		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
-
+		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, Math.exp(-elapsed * 33));
+		iconP1.scale.set(mult, mult);
 		iconP1.updateHitbox();
+
+		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, Math.exp(-elapsed * 33));
+		iconP2.scale.set(mult, mult);
 		iconP2.updateHitbox();
 
 		var iconOffset:Int = 26;
@@ -2659,8 +2663,8 @@ class PlayState extends MusicBeatState
 
 		if (camZooming)
 		{
-			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
-			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
+			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, Math.exp(-elapsed * 4));
+			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, Math.exp(-elapsed * 4));
 		}
 
 		FlxG.watch.addQuick("beatShit", curBeat);
@@ -2736,10 +2740,12 @@ class PlayState extends MusicBeatState
 
 		if (unspawnNotes[0] != null)
 		{
-			if (unspawnNotes[0].strumTime - Conductor.songPosition < 1500)
+			if (unspawnNotes[0].strumTime - Conductor.songPosition < 3000 / SONG.speed)
 			{
 				var dunceNote:Note = unspawnNotes[0];
 				notes.add(dunceNote);
+				if (generatedMusic)
+					notes.sort(sortNotesByTimeHelper, FlxSort.DESCENDING);
 
 				var index:Int = unspawnNotes.indexOf(dunceNote);
 				unspawnNotes.splice(index, 1);
@@ -2757,6 +2763,21 @@ class PlayState extends MusicBeatState
 				if (daNote.mustPress)
 					strum = playerStrums.members[Math.floor(Math.abs(daNote.noteData))];
 
+				if (FlxG.save.data.downscroll)
+					daNote.y = (strum.y - (Conductor.songPosition - daNote.strumTime) * (-0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+				else
+					daNote.y = (strum.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
+
+				daNote.visible = strum.visible;
+				daNote.x = strum.x;
+
+				if (!daNote.isSustainNote)
+					daNote.angle = strum.angle;
+				daNote.alpha = strum.alpha * daNote.multAlpha;
+
+				if (daNote.isSustainNote)
+					daNote.x = strum.x + (strum.width - daNote.width) / 2;
+
 				if (daNote.isSustainNote)
 					daNote.clipToStrumNote(strum);
 				if (daNote.y > FlxG.height)
@@ -2770,7 +2791,7 @@ class PlayState extends MusicBeatState
 					daNote.active = true;
 				}
 
-				if (!daNote.mustPress && daNote.wasGoodHit)
+				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent)
 				{
 					if (SONG.song != 'Tutorial')
 						camZooming = true;
@@ -2803,6 +2824,12 @@ class PlayState extends MusicBeatState
 					daNote.active = false;
 					daNote.hitByOpponent = true;
 
+					if (FlxG.save.data.lightCpuStrums)
+					{
+						strum.playAnim("confirm", true);
+						strum.resetAnim = Conductor.stepCrochet * 1.5 / 1000;
+					}
+
 					if (!daNote.isSustainNote)
 					{
 						daNote.kill();
@@ -2810,21 +2837,6 @@ class PlayState extends MusicBeatState
 						daNote.destroy();
 					}
 				}
-
-				if (FlxG.save.data.downscroll)
-					daNote.y = (strum.y - (Conductor.songPosition - daNote.strumTime) * (-0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
-				else
-					daNote.y = (strum.y - (Conductor.songPosition - daNote.strumTime) * (0.45 * FlxMath.roundDecimal(SONG.speed, 2)));
-
-				daNote.visible = strum.visible;
-				daNote.x = strum.x;
-				
-				if (!daNote.isSustainNote)
-					daNote.angle = strum.angle;
-				daNote.alpha = strum.alpha * daNote.multAlpha;
-
-				if (daNote.isSustainNote)
-					daNote.x = strum.x + (strum.width - daNote.width) / 2;
 
 				// trace(daNote.y);
 				// WIP interpolation shit? Need to fix the pause issue
@@ -3378,18 +3390,23 @@ class PlayState extends MusicBeatState
 							var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition);
 
 							daNote.rating = Ratings.CalculateRating(noteDiff);
-							if (scoreTxtTween != null)
+							if (!daNote.isSustainNote)
 							{
+								if (scoreTxtTween != null || daNote.isSustainNote)
+								{
+									scoreTxtTween.cancel();
+								}
+								scoreTxt.scale.x = 1.075;
+								scoreTxt.scale.y = 1.075;
+								scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
+									onComplete: function(twn:FlxTween)
+									{
+										scoreTxtTween = null;
+									}
+								});
+
 								scoreTxtTween.cancel();
 							}
-							scoreTxt.scale.x = 1.075;
-							scoreTxt.scale.y = 1.075;
-							scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
-								onComplete: function(twn:FlxTween)
-								{
-									scoreTxtTween = null;
-								}
-							});
 
 							if (NearlyEquals(daNote.strumTime, rep.replay.keyPresses[repPresses].time, 30))
 							{
@@ -3728,13 +3745,15 @@ class PlayState extends MusicBeatState
 
 		note.rating = Ratings.CalculateRating(noteDiff);
 
-		if(scoreTxtTween != null) {
+		if (scoreTxtTween != null)
+		{
 			scoreTxtTween.cancel();
 		}
 		scoreTxt.scale.x = 1.075;
 		scoreTxt.scale.y = 1.075;
 		scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
-			onComplete: function(twn:FlxTween) {
+			onComplete: function(twn:FlxTween)
+			{
 				scoreTxtTween = null;
 			}
 		});
@@ -3925,15 +3944,16 @@ class PlayState extends MusicBeatState
 	var lightningStrikeBeat:Int = 0;
 	var lightningOffset:Int = 8;
 
+	public function sortNotesByTimeHelper(Order:Int, Obj1:Note, Obj2:Note)
+	{
+		return FlxSort.byValues(Order, Obj1.strumTime, Obj2.strumTime);
+	}
+
 	override function beatHit()
 	{
 		super.beatHit();
 
 		noteKillOffset = Math.max(Conductor.stepCrochet, 350 / SONG.speed);
-		if (generatedMusic)
-		{
-			notes.sort(FlxSort.byY, FlxSort.DESCENDING);
-		}
 
 		if (executeModchart && lua != null)
 		{
@@ -3971,8 +3991,8 @@ class PlayState extends MusicBeatState
 			camHUD.zoom += 0.03;
 		}
 
-		iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-		iconP2.setGraphicSize(Std.int(iconP2.width + 30));
+		iconP1.scale.set(1.2, 1.2);
+		iconP2.scale.set(1.2, 1.2);
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();

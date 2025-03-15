@@ -7,6 +7,8 @@ import flixel.FlxSprite;
  */
 class StrumNote extends FlxSprite
 {
+	public var resetAnim:Float = 0;
+
 	/**
 	 * Plays the specified animation and centers the offsets and origin.
 	 * 
@@ -18,5 +20,19 @@ class StrumNote extends FlxSprite
 		animation.play(anim, force);
 		centerOffsets();
 		centerOrigin();
+	}
+
+	override function update(elapsed:Float):Void
+	{
+		if (resetAnim > 0)
+		{
+			resetAnim -= elapsed;
+			if (resetAnim < 0)
+			{
+				resetAnim = 0;
+				playAnim("static");
+			}
+		}
+		super.update(elapsed);
 	}
 }

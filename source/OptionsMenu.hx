@@ -33,7 +33,8 @@ class OptionsMenu extends MusicBeatState
 		]),
 		new OptionCatagory("Appearence", [
 			new SongPositionOption("Show the songs current position (as a bar)"),
-			new DownscrollOption("Change the layout of the strumline."),
+			new LightCPUStrums("Makes the Enemy strums light up like the Player Strums do when a note is hit."),
+			new DownscrollOption("Change the layout of the StrumLine."),
 			#if desktop
 			new RainbowFPSOption("Make the FPS Counter Rainbow (Only works with the FPS Counter toggeled on)"),
 			#end
