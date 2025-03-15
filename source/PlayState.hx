@@ -753,6 +753,8 @@ class PlayState extends MusicBeatState
 				}
 			case "takeover":
 				trace("[INFO]: Cassy no background for takeover!");
+				curStage = "cassydemon";
+				defaultCamZoom = 0.8;
 			case 'senpai' | 'roses':
 				{
 					curStage = 'school';
@@ -2032,6 +2034,8 @@ class PlayState extends MusicBeatState
 			babyArrow.playAnim('static');
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
+			babyArrow.defaultX = babyArrow.x;
+			babyArrow.defaultY = babyArrow.y;
 
 			strumLineNotes.add(babyArrow);
 		}
@@ -2235,6 +2239,8 @@ class PlayState extends MusicBeatState
 
 	public static var songRate = 1.5;
 
+	public var spinLength:Float = 0;
+
 	override public function update(elapsed:Float)
 	{
 		#if !debug
@@ -2328,6 +2334,29 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+
+		if (FlxG.save.data.modcharts)
+		{
+			switch (SONG.song.toLowerCase())
+			{
+				case "takeover":
+					if (spinLength < 32)
+						spinLength += 0.2;
+
+					var currentBeat:Float = (Conductor.songPosition / 1000) * (SONG.bpm / 60);
+					for (strum in playerStrums)
+					{
+						strum.x = strum.defaultX + spinLength * Math.sin((currentBeat + 4 * 0.25) * Math.PI);
+						strum.y = strum.defaultY + spinLength * Math.cos((currentBeat + 4 * 0.25) * Math.PI);
+					}
+
+					for (strum in cpuStrums)
+					{
+						strum.x = strum.defaultX + spinLength * Math.sin((currentBeat + 4 * 0.25) * Math.PI);
+						strum.y = strum.defaultY + spinLength * Math.cos((currentBeat + 4 * 0.25) * Math.PI);
+					}
+			}
+		}
 
 		if (FlxG.save.data.accuracyDisplay)
 		{
@@ -2580,9 +2609,9 @@ class PlayState extends MusicBeatState
 
 				switch (dad.curCharacter)
 				{
-					case 'mom' | 'impostergreen':
+					case 'mom' | 'impostergreen' | 'cassandrademon':
 						camFollow.y = dad.getMidpoint().y;
-						if(dad.curCharacter == "impostergreen")
+						if (dad.curCharacter == "impostergreen")
 							camFollow.y += 200;
 					case 'senpai':
 						camFollow.y = dad.getMidpoint().y - 430;

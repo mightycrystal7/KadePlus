@@ -8,6 +8,8 @@ import flixel.FlxSprite;
 class StrumNote extends FlxSprite
 {
 	public var resetAnim:Float = 0;
+	public var defaultY:Float = 50;
+	public var defaultX:Float = 50;
 
 	/**
 	 * Plays the specified animation and centers the offsets and origin.
