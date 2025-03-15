@@ -31539,7 +31539,7 @@
 				"mustHitSection": true
 			}
 		],
-		"player2": "impostor3",
+		"player2": "impostergreen",
 		"chartVersion": "2",
 		"eventObjects": [
 			{
@@ -31552,7 +31552,7 @@
 		"player3": "gf",
 		"song": "Lights-Down",
 		"needsVoices": true,
-		"stage": "toogus",
+		"stage": "stage",
 		"validScore": true,
 		"sections": 0,
 		"bpm": 170,

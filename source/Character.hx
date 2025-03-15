@@ -1,5 +1,6 @@
 package;
 
+import lime.utils.Assets;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
@@ -480,6 +481,24 @@ class Character extends FlxSprite
 
 				antialiasing = false;
 
+			case "impostergreen":
+				frames = Paths.getSparrowAtlas('green');
+				// trace(openfl.utils.Assets.exists(Paths.image("characters/green", "shared")));
+				animation.addByPrefix("idle", "IDLE", 24, false);
+				animation.addByPrefix("singRIGHT", "RIGHT0", 24, false);
+				animation.addByPrefix("singDOWN", "DOWN0", 24, false);
+				animation.addByPrefix("singLEFT", "LEFT0", 24, false);
+				animation.addByPrefix("singUP", "UP0", 24, false);
+				iconColor = 'FF1D8E0E';
+
+				addOffset("idle", 59, -294);
+				addOffset("singRIGHT", 59, -294);
+				addOffset("singDOWN", 106, -303);
+				addOffset("singLEFT", 249, -288);
+				addOffset("singUP", 161, -161);
+
+				playAnim("idle");
+
 			case 'parents-christmas':
 				frames = Paths.getSparrowAtlas('christmas/mom_dad_christmas_assets');
 				animation.addByPrefix('idle', 'Parent Christmas Idle', 24, false);
@@ -537,7 +556,7 @@ class Character extends FlxSprite
 	{
 		if (!isPlayer)
 		{
-			if (animation.curAnim.name.startsWith('sing'))
+			if (animation.curAnim != null && animation.curAnim.name.startsWith('sing')) // fixes crashes if the animation doesn't exist or is null
 			{
 				holdTimer += elapsed;
 			}
@@ -546,6 +565,8 @@ class Character extends FlxSprite
 
 			if (curCharacter == 'dad')
 				dadVar = 6.1;
+			if(curCharacter == 'impostergreen')
+				dadVar = 10;
 			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
 			{
 				dance();

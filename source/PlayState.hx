@@ -752,7 +752,7 @@ class PlayState extends MusicBeatState
 					add(evilSnow);
 				}
 			case "takeover":
-				trace("[INFO]: Cassy no background for takeover!");	
+				trace("[INFO]: Cassy no background for takeover!");
 			case 'senpai' | 'roses':
 				{
 					curStage = 'school';
@@ -2580,8 +2580,10 @@ class PlayState extends MusicBeatState
 
 				switch (dad.curCharacter)
 				{
-					case 'mom':
+					case 'mom' | 'impostergreen':
 						camFollow.y = dad.getMidpoint().y;
+						if(dad.curCharacter == "impostergreen")
+							camFollow.y += 200;
 					case 'senpai':
 						camFollow.y = dad.getMidpoint().y - 430;
 						camFollow.x = dad.getMidpoint().x - 100;
