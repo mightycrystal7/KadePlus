@@ -632,6 +632,26 @@ class PlayState extends MusicBeatState
 					var street:FlxSprite = new FlxSprite(-40, streetBehind.y).loadGraphic(Paths.image('philly/street'));
 					add(street);
 				}
+			case 'lights-down':
+			{
+					curStage = 'mira';
+					var bg:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirabg'));
+					var fg:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirafg'));
+					var table:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mira_table'));
+					bg.antialiasing = true;
+					table.antialiasing = true;
+					fg.antialiasing = true;
+					bg.scrollFactor.set(1, 1);
+					table.scrollFactor.set(1, 1);
+					fg.scrollFactor.set(1, 1);
+					bg.active = false;
+					table.active = false;
+					fg.active = false;
+					defaultCamZoom = 0.9;
+					add(bg);
+					add(fg);
+					add(table);
+			}
 			case 'milf' | 'satin-panties' | 'high':
 				{
 					curStage = 'limo';
@@ -945,6 +965,14 @@ class PlayState extends MusicBeatState
 
 				resetFastCar();
 				add(fastCar);
+			
+			case 'mira':
+			    boyfriend.x = 810;
+				boyfriend.y = 500;
+				gf.x = 275;
+				gf.y = 155;
+				dad.x = -40;
+				dad.y = 200;
 
 			case 'mall':
 				boyfriend.x += 200;
@@ -2189,6 +2217,41 @@ class PlayState extends MusicBeatState
 		return ratingFC;
 	}
 
+	function updateComboCassandra():String
+		{
+			var ratingFC:String;
+			if (misses == 0) // Regular FC
+				ratingFC = "FC";
+			else 
+				ratingFC = "SDCB";
+
+	
+			if (accuracy == 0)
+				ratingFC = "FC";
+	
+			return ratingFC;
+		}
+
+	function updateComboImposter():String
+		{
+			var ratingFC:String;
+			if (misses == 0 && bads == 0 && shits == 0 && goods == 0) // Marvelous (SICK) Full Combo
+				ratingFC = " | SFC";
+			else if (misses == 0 && bads == 0 && shits == 0 && goods >= 1) // Good Full Combo (Nothing but Goods & Sicks)
+				ratingFC = " | GFC";
+			else if (misses == 0) // Regular FC
+				ratingFC = " | FC";
+			else if (misses < 10) // Single Digit Combo Breaks
+				ratingFC = "";
+			else
+				ratingFC = "";
+	
+			if (accuracy == 0)
+				ratingFC = "";
+	
+			return ratingFC;
+		}
+
 	function generateRanking():String
 	{
 		var ranking:String = "";
@@ -2395,7 +2458,32 @@ class PlayState extends MusicBeatState
 		}
 		if (accuracy == 0)
 			scoreTxt.text = 'Score: 0 | Misses: 0 | Rating: ?';
-
+		if (SONG.song.toLowerCase() == 'lights-down') {
+			scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "")
+			+ "Score: "
+			+ (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore)
+			+ " | Combo Breaks: "
+			+ misses
+			+ " | Accuracy: "
+			+ truncateFloat(accuracy, 2)
+			+ "%"
+			+ updateComboImposter();
+			scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.fromRGB(29, 142, 14), CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		}
+		if (SONG.song.toLowerCase() == 'takeover') {
+			scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			scoreTxt.text = 'Rating: ' + updateComboCassandra()
+			+ " // Misses: "
+			+ misses
+			+ " // Health: "
+			+ health * 50 + "%"
+			+ " // Score: "
+			+ songScore
+			+ " // Accuracy: "
+			+ truncateFloat(accuracy, 2)
+			+ "%";
+		}
+			
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
 		{
 			persistentUpdate = false;
@@ -3075,6 +3163,7 @@ class PlayState extends MusicBeatState
 				songScore += Math.round(score);
 			songScoreDef += Math.round(ConvertScore.convertScore(noteDiff));
 
+			if(SONG.song.toLowerCase() != 'takeover') {
 			if (scoreTxtTween != null)
 			{
 				scoreTxtTween.cancel();
@@ -3087,6 +3176,7 @@ class PlayState extends MusicBeatState
 					scoreTxtTween = null;
 				}
 			});
+		}
 
 			/* if (combo > 60)
 					daRating = 'sick';
