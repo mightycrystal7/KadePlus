@@ -28,7 +28,7 @@ class OptionsMenu extends MusicBeatState
 			#end
 			new ScrollSpeedOption("Change your scroll speed (Left for -0.1, right for +0.1. If its at 1, it will be chart dependent)"),
 			new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
-			// new OffsetMenu("Get a note offset based off of your inputs!"),
+			new Modcharts("Enables or shuts off modcharts. (eg. takeover moving the arrows in circles)."),
 			new CustomizeGameplay("Drag'n'Drop Gameplay Modules around to your preference")
 		]),
 		new OptionCatagory("Appearence", [
