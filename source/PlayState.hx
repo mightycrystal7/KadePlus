@@ -73,6 +73,9 @@ class PlayState extends MusicBeatState
 	public static var curStage:String = '';
 	public static var SONG:SwagSong;
 	public static var isStoryMode:Bool = false;
+
+	public var botplaySine:Float = 0;
+
 	public static var storyWeek:Int = 0;
 
 	public var noteKillOffset:Float = 350;
@@ -186,6 +189,7 @@ class PlayState extends MusicBeatState
 	var songScoreDef:Int = 0;
 	var scoreTxt:FlxText;
 	var replayTxt:FlxText;
+	var botPlayTxt:FlxText;
 
 	public static var campaignScore:Int = 0;
 
@@ -271,7 +275,7 @@ class PlayState extends MusicBeatState
 
 	private function convert(v:Any, type:String):Dynamic
 	{ // I didn't write this lol
-		if (Std.is(v, String) && type != null)
+		if (Std.isOfType(v, String) && type != null)
 		{
 			var v:String = v;
 			if (type.substr(0, 4) == 'array')
@@ -1063,6 +1067,14 @@ class PlayState extends MusicBeatState
 		healthBar.createFilledBar(FlxColor.fromString('#' + dad.iconColor), FlxColor.fromString('#' + boyfriend.iconColor));
 		// healthBar
 		add(healthBar);
+
+		botPlayTxt = new FlxText(0, strumLine.y + 16, 0, 'BOTPLAY');
+		botPlayTxt.setFormat(Paths.font("vcr.ttf"), 27, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		botPlayTxt.cameras = [camHUD];
+		botPlayTxt.borderSize = 2;
+		botPlayTxt.visible = cpuControlled;
+		botPlayTxt.screenCenter(X);
+		add(botPlayTxt);
 
 		// Add Kade Engine watermark
 		kadeEngineWatermark = new FlxText(4, healthBarBG.y
@@ -2334,6 +2346,11 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+		if (botPlayTxt != null && botPlayTxt.visible)
+		{
+			botplaySine += 180 * elapsed;
+			botPlayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
+		}
 
 		if (FlxG.save.data.modcharts)
 		{
@@ -2753,6 +2770,15 @@ class PlayState extends MusicBeatState
 
 		if (!inCutscene && !cpuControlled)
 			keyShit();
+		if (cpuControlled)
+		{
+			if (boyfriend.holdTimer > Conductor.stepCrochet * 0.001 * 4
+				&& boyfriend.animation.curAnim.name.startsWith('sing')
+				&& !boyfriend.animation.curAnim.name.endsWith('miss'))
+			{
+				boyfriend.dance();
+			}
+		}
 
 		if (generatedMusic)
 		{
@@ -2780,9 +2806,12 @@ class PlayState extends MusicBeatState
 					&& (daNote.strumTime <= Conductor.songPosition
 						|| daNote.isSustainNote
 						&& daNote.prevNote.wasGoodHit
-						&& daNote.canBeHit))
+						&& daNote.canBeHit)
+					&& !daNote.wasGoodHit)
+				{
 					goodNoteHit(daNote, true);
-
+					boyfriend.holdTimer = 0;
+				}
 				if (daNote?.isSustainNote)
 					daNote.clipToStrumNote(strum);
 
@@ -2973,7 +3002,10 @@ class PlayState extends MusicBeatState
 	private function popUpScore(daNote:Note):Void
 	{
 		if (cpuControlled)
-			return;
+		{
+			if (health < 2)
+				health += 0.1;
+		}
 		var noteDiff:Float = Math.abs(Conductor.songPosition - daNote.strumTime);
 		var wife:Float = EtternaFunctions.wife3(noteDiff, Conductor.timeScale);
 		// boyfriend.playAnim('hey');
@@ -2994,49 +3026,53 @@ class PlayState extends MusicBeatState
 		if (FlxG.save.data.accuracyMod == 1)
 			totalNotesHit += wife;
 
-		var daRating = daNote.rating;
+		var daRating = !cpuControlled ? daNote.rating : "sick";
 
-		switch (daRating)
+		if (!cpuControlled)
 		{
-			case 'shit':
-				score = -300;
-				combo = 0;
-				misses++;
-				health -= 0.2;
-				ss = false;
-				shits++;
-				if (FlxG.save.data.accuracyMod == 0)
-					totalNotesHit += 0.25;
-			case 'bad':
-				daRating = 'bad';
-				score = 0;
-				health -= 0.06;
-				ss = false;
-				bads++;
-				if (FlxG.save.data.accuracyMod == 0)
-					totalNotesHit += 0.50;
-			case 'good':
-				daRating = 'good';
-				score = 200;
-				ss = false;
-				goods++;
-				if (health < 2)
-					health += 0.04;
-				if (FlxG.save.data.accuracyMod == 0)
-					totalNotesHit += 0.75;
-			case 'sick':
-				if (health < 2)
-					health += 0.1;
-				if (FlxG.save.data.accuracyMod == 0)
-					totalNotesHit += 1;
-				sicks++;
+			switch (daRating)
+			{
+				case 'shit':
+					score = -300;
+					combo = 0;
+					misses++;
+					health -= 0.2;
+					ss = false;
+					shits++;
+					if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.25;
+				case 'bad':
+					daRating = 'bad';
+					score = 0;
+					health -= 0.06;
+					ss = false;
+					bads++;
+					if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.50;
+				case 'good':
+					daRating = 'good';
+					score = 200;
+					ss = false;
+					goods++;
+					if (health < 2)
+						health += 0.04;
+					if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 0.75;
+				case 'sick':
+					if (health < 2)
+						health += 0.1;
+					if (FlxG.save.data.accuracyMod == 0)
+						totalNotesHit += 1;
+					sicks++;
+			}
 		}
 
 		// trace('Wife accuracy loss: ' + wife + ' | Rating: ' + daRating + ' | Score: ' + score + ' | Weight: ' + (1 - wife));
 
 		if (daRating != 'shit' || daRating != 'bad')
 		{
-			songScore += Math.round(score);
+			if (!cpuControlled)
+				songScore += Math.round(score);
 			songScoreDef += Math.round(ConvertScore.convertScore(noteDiff));
 
 			if (scoreTxtTween != null)
@@ -3071,6 +3107,7 @@ class PlayState extends MusicBeatState
 
 			rating.loadGraphic(Paths.image(pixelShitPart1 + daRating + pixelShitPart2));
 			rating.screenCenter();
+			rating.visible = !cpuControlled;
 			rating.y -= 50;
 			rating.x = coolText.x - 125;
 
@@ -3132,6 +3169,7 @@ class PlayState extends MusicBeatState
 			var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
 			comboSpr.screenCenter();
 			comboSpr.x = rating.x;
+			comboSpr.visible = !cpuControlled;
 			comboSpr.y = rating.y + 100;
 			comboSpr.acceleration.y = 600;
 			comboSpr.velocity.y -= 150;
@@ -3570,16 +3608,13 @@ class PlayState extends MusicBeatState
 
 		if (!note.wasGoodHit)
 		{
-			if (!cpuControlled)
+			if (!note.isSustainNote)
 			{
-				if (!note.isSustainNote)
-				{
-					popUpScore(note);
-					combo += 1;
-				}
-				else
-					totalNotesHit += 1;
+				popUpScore(note);
+				combo += 1;
 			}
+			else
+				totalNotesHit += !cpuControlled ? 1 : 0;
 
 			switch (note.noteData)
 			{
