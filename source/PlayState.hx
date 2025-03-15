@@ -2751,7 +2751,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (!inCutscene && !cpuControlled)
+		if (!inCutscene)
 			keyShit();
 
 		if (generatedMusic)
@@ -2769,24 +2769,18 @@ class PlayState extends MusicBeatState
 
 				daNote.visible = strum.visible;
 				daNote.x = strum.x;
+
 				if (!daNote.isSustainNote)
 					daNote.angle = strum.angle;
 				daNote.alpha = strum.alpha * daNote.multAlpha;
+
 				if (daNote.isSustainNote)
 					daNote.x = strum.x + (strum.width - daNote.width) / 2;
 
-				if (cpuControlled
-					&& daNote.mustPress
-					&& (daNote.strumTime <= Conductor.songPosition
-						|| daNote.isSustainNote
-						&& daNote.prevNote.wasGoodHit
-						&& daNote.canBeHit))
-					goodNoteHit(daNote, true);
-
-				if (daNote?.isSustainNote)
+				if (daNote.isSustainNote)
 					daNote.clipToStrumNote(strum);
-
-				if (!daNote?.mustPress && daNote?.wasGoodHit && !daNote?.hitByOpponent)
+				daNote.visible = daNote.isOnScreen(camHUD);
+				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent)
 				{
 					if (SONG.song != 'Tutorial')
 						camZooming = true;
@@ -2838,7 +2832,7 @@ class PlayState extends MusicBeatState
 				// daNote.y = (strumLine.y - (songTime - daNote.strumTime) * (0.45 * PlayState.SONG.speed));
 
 				// Kill extremely late notes and cause misses
-				if (Conductor.songPosition - daNote?.strumTime > noteKillOffset)
+				if (Conductor.songPosition - daNote.strumTime > noteKillOffset)
 				{
 					if (daNote.mustPress && !false && !daNote.ignoreNote && (daNote.tooLate || !daNote.wasGoodHit))
 						noteMiss(daNote.noteData, daNote);
@@ -2889,8 +2883,7 @@ class PlayState extends MusicBeatState
 		{
 			if (isStoryMode)
 			{
-				if (!cpuControlled)
-					campaignScore += Math.round(songScore);
+				campaignScore += Math.round(songScore);
 
 				storyPlaylist.remove(storyPlaylist[0]);
 
@@ -2909,10 +2902,10 @@ class PlayState extends MusicBeatState
 						lua = null;
 					}
 
-					if (!cpuControlled)
-						StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
+					// if ()
+					StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
 
-					if (SONG.validScore && !cpuControlled)
+					if (SONG.validScore)
 					{
 						Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
 					}
@@ -2972,8 +2965,6 @@ class PlayState extends MusicBeatState
 
 	private function popUpScore(daNote:Note):Void
 	{
-		if (cpuControlled)
-			return;
 		var noteDiff:Float = Math.abs(Conductor.songPosition - daNote.strumTime);
 		var wife:Float = EtternaFunctions.wife3(noteDiff, Conductor.timeScale);
 		// boyfriend.playAnim('hey');
@@ -3545,41 +3536,37 @@ class PlayState extends MusicBeatState
 	function goodNoteHit(note:Note, resetMashViolation = true):Void
 	{
 		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition);
-		if (!cpuControlled)
-		{
-			note.rating = Ratings.CalculateRating(noteDiff);
 
-			if (scoreTxtTween != null)
-			{
-				scoreTxtTween.cancel();
-			}
-			scoreTxt.scale.x = 1.075;
-			scoreTxt.scale.y = 1.075;
-			scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
-				onComplete: function(twn:FlxTween)
-				{
-					scoreTxtTween = null;
-				}
-			});
+		note.rating = Ratings.CalculateRating(noteDiff);
+
+		if (scoreTxtTween != null)
+		{
+			scoreTxtTween.cancel();
 		}
+		scoreTxt.scale.x = 1.075;
+		scoreTxt.scale.y = 1.075;
+		scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
+			onComplete: function(twn:FlxTween)
+			{
+				scoreTxtTween = null;
+			}
+		});
+
 		if (!note.isSustainNote)
 			notesHitArray.push(Date.now());
 
-		if (resetMashViolation || cpuControlled)
+		if (resetMashViolation)
 			mashViolations--;
 
 		if (!note.wasGoodHit)
 		{
-			if (!cpuControlled)
+			if (!note.isSustainNote)
 			{
-				if (!note.isSustainNote)
-				{
-					popUpScore(note);
-					combo += 1;
-				}
-				else
-					totalNotesHit += 1;
+				popUpScore(note);
+				combo += 1;
 			}
+			else
+				totalNotesHit += 1;
 
 			switch (note.noteData)
 			{
@@ -3602,8 +3589,6 @@ class PlayState extends MusicBeatState
 					}
 				});
 
-			if (cpuControlled)
-				playerStrums.members[note.noteData % 4].resetAnim = Conductor.stepCrochet / 1000 * 1.5;
 			note.wasGoodHit = true;
 			vocals.volume = 1;
 
@@ -3614,8 +3599,7 @@ class PlayState extends MusicBeatState
 				note.destroy();
 			}
 
-			if (!cpuControlled)
-				updateAccuracy();
+			updateAccuracy();
 		}
 	}
 
@@ -3758,8 +3742,6 @@ class PlayState extends MusicBeatState
 	{
 		return FlxSort.byValues(Order, Obj1.strumTime, Obj2.strumTime);
 	}
-
-	public var cpuControlled:Bool = FlxG.save.data.cpuControlled;
 
 	override function beatHit()
 	{
