@@ -1,5 +1,8 @@
 package;
 
+import openfl.display.BitmapData;
+import openfl.Assets;
+import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.AssetType;
@@ -100,6 +103,26 @@ class Paths
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 
+	public static var bitmapCache:Map<String, FlxGraphic> = new Map();
+
+	inline static public function cacheBitmap(key:String, ?library:String)
+	{
+		var path = img(key);
+		if (bitmapCache.exists(path))
+			return bitmapCache.get(path);
+		if (Assets.exists(path))
+		{
+			var graphic = FlxG.bitmap.add(path);
+			graphic.bitmap.disposeImage();
+
+			graphic.destroyOnNoUse = false;
+			graphic.persist = true;
+			bitmapCache.set(path, graphic);
+			return graphic;
+		}
+		return null; // no image found, haxeflixel logo time
+	}
+
 	inline static public function voices(song:String)
 	{
 		return 'songs:assets/songs/${song.toLowerCase()}/Voices.$SOUND_EXT';
@@ -111,6 +134,13 @@ class Paths
 	}
 
 	inline static public function image(key:String, ?library:String)
+	{
+		var bitmap = cacheBitmap(key, library);
+
+		return bitmap;
+	}
+
+	inline static public function img(key:String, ?library:String)
 	{
 		return getPath('images/$key.png', IMAGE, library);
 	}
