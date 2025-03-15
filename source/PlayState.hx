@@ -1026,7 +1026,6 @@ class PlayState extends MusicBeatState
 			strumLine.y = FlxG.height - 165;
 
 		strumLineNotes = new FlxTypedSpriteGroup<StrumNote>();
-		
 
 		playerStrums = new FlxTypedSpriteGroup<StrumNote>();
 		add(playerStrums);
@@ -2063,7 +2062,7 @@ class PlayState extends MusicBeatState
 				playerStrums.add(babyArrow);
 				babyArrow.x += Note.swagWidth - 10;
 			}
-			else 
+			else
 				cpuStrums.add(babyArrow);
 
 			babyArrow.playAnim('static');
@@ -2787,17 +2786,7 @@ class PlayState extends MusicBeatState
 
 				if (daNote.isSustainNote)
 					daNote.clipToStrumNote(strum);
-				if (daNote.y > FlxG.height)
-				{
-					daNote.active = false;
-					daNote.visible = false;
-				}
-				else
-				{
-					daNote.visible = true;
-					daNote.active = true;
-				}
-
+				daNote.visible = daNote.isOnScreen(camHUD);
 				if (!daNote.mustPress && daNote.wasGoodHit && !daNote.hitByOpponent)
 				{
 					if (SONG.song != 'Tutorial')

@@ -126,7 +126,7 @@ class Character extends FlxSprite
 
 			case 'dad':
 				// DAD ANIMATION LOADING CODE
-				tex = Paths.getSparrowAtlas('DADDY_DEAREST','shared');
+				tex = Paths.getSparrowAtlas('DADDY_DEAREST', 'shared');
 				frames = tex;
 				iconColor = 'FFBF7FD4';
 				animation.addByPrefix('idle', 'Dad idle dance', 24);
@@ -184,7 +184,7 @@ class Character extends FlxSprite
 			case 'mom-car':
 				tex = Paths.getSparrowAtlas('momCar');
 				frames = tex;
-                iconColor = 'FFD8558E';
+				iconColor = 'FFD8558E';
 				animation.addByPrefix('idle', "Mom Idle", 24, false);
 				animation.addByPrefix('singUP', "Mom Up Pose", 24, false);
 				animation.addByPrefix('singDOWN', "MOM DOWN POSE", 24, false);
@@ -272,7 +272,7 @@ class Character extends FlxSprite
 				flipX = true;
 
 			case 'bf':
-				var tex = Paths.getSparrowAtlas('BOYFRIEND','shared');
+				var tex = Paths.getSparrowAtlas('BOYFRIEND', 'shared');
 				frames = tex;
 				iconColor = 'FF35B4D3';
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
@@ -558,7 +558,7 @@ class Character extends FlxSprite
 			case 'gf':
 				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
 					iconColor = 'FFA4004D';
-					playAnim('danceRight');
+				playAnim('danceRight');
 		}
 
 		super.update(elapsed);
