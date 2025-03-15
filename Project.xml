@@ -52,6 +52,9 @@
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web" />
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web" />
 
+	<assets path="assets/embed" rename="assets" exclude="*.ogg" if="web" embed="true" />
+	<assets path="assets/embed" rename="assets" exclude="*.mp3" unless="web" embed="true" />
+
 	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web" />
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL" />

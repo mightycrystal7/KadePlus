@@ -55,7 +55,7 @@ class Paths
 		return getPath(file, type, library);
 	}
 
-	inline static public function lua(key:String,?library:String)
+	inline static public function lua(key:String, ?library:String)
 	{
 		return getPath('data/$key.lua', TEXT, library);
 	}
@@ -92,6 +92,11 @@ class Paths
 
 	inline static public function music(key:String, ?library:String)
 	{
+		if (key == "freakyMenu"
+			&& (Date.now().getDay() == 1 || Date.now().getDay() == 2)
+			&& Date.now().getMonth() == 3) //  0: january 1:february, 2: march, 3: april
+			key = "yeahyeahyeah";
+
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 
