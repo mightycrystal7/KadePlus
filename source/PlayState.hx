@@ -124,6 +124,7 @@ class PlayState extends MusicBeatState
 
 	private var strumLineNotes:FlxTypedSpriteGroup<StrumNote>;
 	private var playerStrums:FlxTypedSpriteGroup<StrumNote>;
+	private var cpuStrums:FlxTypedSpriteGroup<StrumNote>;
 
 	private var camZooming:Bool = false;
 	private var curSong:String = "";
@@ -1025,9 +1026,13 @@ class PlayState extends MusicBeatState
 			strumLine.y = FlxG.height - 165;
 
 		strumLineNotes = new FlxTypedSpriteGroup<StrumNote>();
-		add(strumLineNotes);
+		
 
 		playerStrums = new FlxTypedSpriteGroup<StrumNote>();
+		add(playerStrums);
+
+		cpuStrums = new FlxTypedSpriteGroup<StrumNote>();
+		add(cpuStrums);
 
 		// startCountdown();
 
@@ -2056,8 +2061,10 @@ class PlayState extends MusicBeatState
 			if (player == 1)
 			{
 				playerStrums.add(babyArrow);
-				babyArrow.x += Note.swagWidth;
+				babyArrow.x += Note.swagWidth - 10;
 			}
+			else 
+				cpuStrums.add(babyArrow);
 
 			babyArrow.playAnim('static');
 			babyArrow.x += 50;
@@ -2759,7 +2766,7 @@ class PlayState extends MusicBeatState
 		{
 			notes.forEachAlive(function(daNote:Note)
 			{
-				var strum = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))];
+				var strum = cpuStrums.members[Math.floor(Math.abs(daNote.noteData))];
 				if (daNote.mustPress)
 					strum = playerStrums.members[Math.floor(Math.abs(daNote.noteData))];
 
