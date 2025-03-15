@@ -411,6 +411,27 @@ class NPSDisplayOption extends Option
 	}
 }
 
+class BotPlay extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.cpuControlled = !FlxG.save.data.cpuControlled;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "BotPlay: " + (!FlxG.save.data.cpuControlled ? "Disabled" : "Enabled");
+	}
+}
+
 class Modcharts extends Option
 {
 	public function new(desc:String)

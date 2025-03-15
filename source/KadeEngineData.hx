@@ -45,6 +45,9 @@ class KadeEngineData
 		if (FlxG.save.data.modcharts == null)
 			FlxG.save.data.modcharts = false;
 
+		if (FlxG.save.data.cpuControlled == null)
+			FlxG.save.data.cpuControlled = false;
+
 		if (FlxG.save.data.fpsCap == null)
 			FlxG.save.data.fpsCap = 120;
 
