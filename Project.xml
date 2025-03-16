@@ -51,11 +51,6 @@
 	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web" />
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web" />
 
-		<section if="linux">
- 		<assets path="assets/secrets" rename="assets" exclude="*.ogg" if="web" />
-		<assets path="assets/secrets" rename="assets" exclude="*.mp3" unless="web"/>
-	</section>
-
 	<assets path="assets/secrets" rename="assets" exclude="*.ogg" if="web" embed="true" />
 	<assets path="assets/secrets" rename="assets" exclude="*.mp3" unless="web" embed="true" />
 
@@ -132,12 +127,16 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="hscript" />
 
+	<haxedef name ="no-deprecation-warnings" /> 
+
 	<!--In
 	case you want to use the ui package-->
 	<haxelib name="flixel-ui" />
 	<haxelib name="faxe" if='switch' />
 	<haxelib name="discord_rpc" if="windows" />
 	<haxelib name="linc_luajit" unless="web hl" />
+	<haxelib name="hxcpp" unless="web" /> 
+	<haxedef name="NO_PRECOMPILED_HEADERS"/>
 
 	<!-- <haxelib name="hxcpp-debug-server" if="desktop"/> -->
 

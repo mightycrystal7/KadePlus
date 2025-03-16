@@ -22,6 +22,10 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+import states.MainMenuState;
+import objects.Alphabet;
+import backend.Conductor;
+import other.BackgroundDancer;
 
 #if windows
 import Discord.DiscordClient;
@@ -33,13 +37,13 @@ import sys.thread.Thread;
 
 using StringTools;
 
-class TitleState extends MusicBeatState
+class TitleState extends states.MusicBeatState
 {
 	static var initialized:Bool = false;
 
 	var blackScreen:FlxSprite;
 	var credGroup:FlxGroup;
-	var credTextShit:Alphabet;
+	var credTextShit:objects.Alphabet;
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
 
@@ -63,7 +67,7 @@ class TitleState extends MusicBeatState
 			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
 		}
 		
-		PlayerSettings.init();
+		other.PlayerSettings.init();
 
 		#if windows
 		DiscordClient.initialize();
@@ -84,9 +88,9 @@ class TitleState extends MusicBeatState
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 
-		KadeEngineData.initSave();
+		other.KadeEngineData.initSave();
 
-		Highscore.load();
+		backend.Highscore.load();
 
 		if (FlxG.save.data.weekUnlocked != null)
 		{
@@ -94,12 +98,12 @@ class TitleState extends MusicBeatState
 			// WEEK UNLOCK PROGRESSION!!
 			// StoryMenuState.weekUnlocked = FlxG.save.data.weekUnlocked;
 
-			if (StoryMenuState.weekUnlocked.length < 4)
-				StoryMenuState.weekUnlocked.insert(0, true);
+			if (states.StoryMenuState.weekUnlocked.length < 4)
+				states.StoryMenuState.weekUnlocked.insert(0, true);
 
 			// QUICK PATCH OOPS!
-			if (!StoryMenuState.weekUnlocked[0])
-				StoryMenuState.weekUnlocked[0] = true;
+			if (!states.StoryMenuState.weekUnlocked[0])
+				states.StoryMenuState.weekUnlocked[0] = true;
 		}
 
 		#if FREEPLAY
@@ -148,7 +152,7 @@ class TitleState extends MusicBeatState
 			FlxG.sound.music.fadeIn(4, 0, 0.7);
 		}
 
-		Conductor.changeBPM(102);
+		backend.Conductor.changeBPM(102);
 		persistentUpdate = true;
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -246,7 +250,7 @@ class TitleState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music != null)
-			Conductor.songPosition = FlxG.sound.music.time;
+			backend.Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
 
 		if (FlxG.keys.justPressed.F)
@@ -298,17 +302,17 @@ class TitleState extends MusicBeatState
 				var http = new haxe.Http("https://raw.githubusercontent.com/mightycrystal7/KadePlus/main/version.downloadMe");
 
 				http.onData = function (data:String) {
-				  
-				  	if (OutdatedSubState.needVer != "1.0p")
-					{
-						trace('outdated lmao! ' + data.trim() + ' != ' + MainMenuState.kadeEngineVer);
-						OutdatedSubState.needVer = data;
-						FlxG.switchState(new OutdatedSubState());
-						trace("not the version you need");
-					} else {
-						FlxG.switchState(new MainMenuState());
-					}
-				}
+                  
+					if (data.trim() > states.MainMenuState.plusVer)
+				  {
+					  trace('outdated lmao! ' + data.trim() + ' != ' + states.MainMenuState.plusVer);
+					  substates.OutdatedSubState.needVer = data;
+					  FlxG.switchState(new substates.OutdatedSubState());
+					  trace("not the version you need");
+				  } else {
+					  FlxG.switchState(new MainMenuState());
+				  }
+			  }
 				
 				http.onError = function (error) {
 				  trace('error: $error');
@@ -333,7 +337,7 @@ class TitleState extends MusicBeatState
 	{
 		for (i in 0...textArray.length)
 		{
-			var money:Alphabet = new Alphabet(0, 0, textArray[i], true, false);
+			var money:Alphabet = new objects.Alphabet(0, 0, textArray[i], true, false);
 			money.screenCenter(X);
 			money.y += (i * 60) + 200;
 			credGroup.add(money);
@@ -343,7 +347,7 @@ class TitleState extends MusicBeatState
 
 	function addMoreText(text:String)
 	{
-		var coolText:Alphabet = new Alphabet(0, 0, text, true, false);
+		var coolText:objects.Alphabet = new objects.Alphabet(0, 0, text, true, false);
 		coolText.screenCenter(X);
 		coolText.y += (textGroup.length * 60) + 200;
 		credGroup.add(coolText);
