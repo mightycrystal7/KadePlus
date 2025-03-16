@@ -22,7 +22,8 @@ class OutdatedSubState extends MusicBeatState
 			"Hey Buddy!\nyour build of\n Kade Engine Plus is Outdated!\n"
 			+ MainMenuState.plusVer
 			+ " is your current version\nwhile the most recent version is " + needVer
-			+ "!\nPress Space to go to the github or ESCAPE to ignore this!!",
+			+ "!\nPress Space to go to the github or ESCAPE to ignore this!!"
+			+ "\nIf you are getting this on the same version\nask for help"
 			32);
 		txt.setFormat("VCR OSD Mono", 32, FlxColor.WHITE, CENTER);
 		txt.screenCenter();
@@ -33,7 +34,7 @@ class OutdatedSubState extends MusicBeatState
 	{
 		if (controls.ACCEPT)
 		{
-			FlxG.openURL("https://github.com/KadeDev/Kade-Engine/releases/latest");
+			FlxG.openURL("https://github.com/mightycrystal7/KadePlus/releases");
 		}
 		if (controls.BACK)
 		{

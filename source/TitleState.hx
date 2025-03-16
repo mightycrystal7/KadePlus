@@ -299,7 +299,7 @@ class TitleState extends MusicBeatState
 
 				http.onData = function (data:String) {
 				  
-				  	if (OutdatedSubState.needVer != '1.0p')
+				  	if (OutdatedSubState.needVer != "1.0p")
 					{
 						trace('outdated lmao! ' + data.trim() + ' != ' + MainMenuState.kadeEngineVer);
 						OutdatedSubState.needVer = data;
