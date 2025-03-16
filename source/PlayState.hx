@@ -657,17 +657,12 @@ class PlayState extends MusicBeatState
 					add(bg);
 					add(fg);
 					add(table);
-					if(curStep == 256) {
-                        remove(bg);
-						remove(fg);
-						remove(table);
-					}
-					if(curStep == 512)  {
-                        add(bg);
-						add(fg);
-						add(table);
-					}
 			}
+			case 'defeated':
+				{
+					curStage = 'defeatedfnf';
+					remove(gf);
+				}
 			case 'milf' | 'satin-panties' | 'high':
 				{
 					curStage = 'limo';
@@ -989,7 +984,10 @@ class PlayState extends MusicBeatState
 				gf.y = 155;
 				dad.x = -40;
 				dad.y = 200;
-
+            case 'defeatedfnf':
+				dad.x = 0;
+				dad.y = 0;
+				remove(gf);
 			case 'mall':
 				boyfriend.x += 200;
 
@@ -1108,7 +1106,10 @@ class PlayState extends MusicBeatState
 		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
 			'health', 0, 2);
 		healthBar.scrollFactor.set();
+		if(SONG.song.toLowerCase() != 'defeated')
 		healthBar.createFilledBar(FlxColor.fromString('#' + dad.iconColor), FlxColor.fromString('#' + boyfriend.iconColor));
+		else
+			healthBar.createFilledBar(0xFFFF0000, 0xFF66FF33);
 		// healthBar
 		add(healthBar);
 
@@ -2268,6 +2269,26 @@ class PlayState extends MusicBeatState
 			return ratingFC;
 		}
 
+		function updateComboImposterTwo():String
+			{
+				var ratingFC:String;
+				if (misses == 0 && bads == 0 && shits == 0 && goods == 0) // Marvelous (SICK) Full Combo
+					ratingFC = " | (MFC) AAAA";
+				else if (misses == 0 && bads == 0 && shits == 0 && goods >= 1) // Good Full Combo (Nothing but Goods & Sicks)
+					ratingFC = " | (GFC) AAA";
+				else if (misses == 0) // Regular FC
+					ratingFC = " | (FC) AA";
+				else if (misses < 10) // Single Digit Combo Breaks
+					ratingFC = " | (SDCB) A";
+				else
+					ratingFC = " | (Clear) C";
+		
+				if (accuracy == 0)
+					ratingFC = " | N/A";
+		
+				return ratingFC;
+			}
+
 	function generateRanking():String
 	{
 		var ranking:String = "";
@@ -2501,6 +2522,22 @@ class PlayState extends MusicBeatState
 			+ " // Accuracy: "
 			+ truncateFloat(accuracy, 2)
 			+ "%";
+		}
+		if (SONG.song.toLowerCase() == 'defeated')
+		{
+			scoreTxt.y = healthBarBG.y + 50;
+			if(misses >= 1)
+				health = 0;
+			scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "")
+			+ "Score:"
+			+ (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore)
+			+ " | Combo Breaks:"
+			+ misses
+			+ " | Accuracy:"
+			+ truncateFloat(accuracy, 2)
+			+ " %"
+			+ updateComboImposterTwo();
 		}
 			
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
@@ -3113,6 +3150,9 @@ class PlayState extends MusicBeatState
 		// boyfriend.playAnim('hey');
 		vocals.volume = 1;
 
+		if (SONG.song.toLowerCase() != 'lights-down' && curSong != 'Takeover' && cpuControlled)
+			health += 0.08;
+
 		if (curSong == 'Takeover')
 			health += 0.02;
 
@@ -3182,7 +3222,7 @@ class PlayState extends MusicBeatState
 				songScore += Math.round(score);
 			songScoreDef += Math.round(ConvertScore.convertScore(noteDiff));
 
-			if(SONG.song.toLowerCase() != 'takeover') {
+			if(SONG.song.toLowerCase() != 'takeover' && SONG.song.toLowerCase() != 'defeated') {
 			if (scoreTxtTween != null)
 			{
 				scoreTxtTween.cancel();
@@ -3939,6 +3979,36 @@ class PlayState extends MusicBeatState
 		if (dad.curCharacter == 'spooky' && curStep % 4 == 2)
 		{
 			// dad.dance();
+		}
+
+		if(SONG.song.toLowerCase() == 'defeated')
+		{
+			if(curStep == 1168) {
+				scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.fromRGB(255, 15, 0), CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "")
+			+ "Score: "
+			+ (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore)
+			+ " | Combo Breaks: "
+			+ misses + ' /' + '0'
+			+ " | Accuracy: "
+			+ truncateFloat(accuracy, 2)
+			+ "%"
+			+ updateComboImposter();
+			super.update(1);
+			}
+			if(curStep >= 1168)
+			{
+				scoreTxt.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			scoreTxt.text = (FlxG.save.data.npsDisplay ? "NPS: " + nps + " | " : "")
+			+ "Score:"
+			+ (Conductor.safeFrames != 10 ? songScore + " (" + songScoreDef + ")" : "" + songScore)
+			+ " | Combo Breaks:"
+			+ misses
+			+ " | Accuracy:"
+			+ truncateFloat(accuracy, 2)
+			+ " %"
+			+ updateComboImposterTwo();
+			}
 		}
 
 		if(SONG.song.toLowerCase() == 'lights-down') {

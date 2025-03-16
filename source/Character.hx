@@ -591,6 +591,24 @@ class Character extends FlxSprite
 
 				playAnim("idle");
 
+			case "black":
+				frames = Paths.getSparrowAtlas('black');
+				// trace(openfl.utils.Assets.exists(Paths.image("characters/green", "shared")));
+				animation.addByPrefix("idle", "Parasite Idle", 24, false);
+				animation.addByPrefix("singRIGHT", "Parasite Right", 24, false);
+				animation.addByPrefix("singDOWN", "Parasite Down", 24, false);
+				animation.addByPrefix("singLEFT", "Parasite Left", 24, false);
+				animation.addByPrefix("singUP", "Parasite Up", 24, false);
+				iconColor = 'FF000000';
+
+				addOffset("idle", 59, -294);
+				addOffset("singRIGHT", 59, -294);
+				addOffset("singDOWN", 106, -303);
+				addOffset("singLEFT", 249, -288);
+				addOffset("singUP", 161, -161);
+
+				playAnim("idle");
+
 				case "whitegreen":
 					frames = Paths.getSparrowAtlas('whitegreen');
 					// trace(openfl.utils.Assets.exists(Paths.image("characters/green", "shared")));

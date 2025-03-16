@@ -104,12 +104,15 @@ class OptionsMenu extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (controls.BACK && !isCat)
+		if (controls.BACK && !isCat) {
 			FlxG.switchState(new MainMenuState());
+		    FlxG.save.flush();
+		}
 		else if (controls.BACK)
 		{
 			isCat = false;
 			grpControls.clear();
+			FlxG.save.flush();
 			for (i in 0...options.length)
 			{
 				var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, options[i].getName(), true, false);
@@ -213,7 +216,7 @@ class OptionsMenu extends MusicBeatState
 				curSelected = 0;
 			}
 		}
-		FlxG.save.flush();
+		// FlxG.save.flush(); what was kadedev doing in 2021?
 	}
 
 	var isSettingControl:Bool = false;

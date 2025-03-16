@@ -19,3 +19,4 @@ Roses:senpai:6
 Thorns:spirit:6
 Lights-Down:impostergreen:7
 Takeover:cassandrademon:7
+Defeated:black:8
