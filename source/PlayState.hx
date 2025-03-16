@@ -88,6 +88,8 @@ class PlayState extends MusicBeatState
 	public static var goods:Int = 0;
 	public static var sicks:Int = 0;
 
+	var black:FlxSprite;
+
 	public static var songPosBG:FlxSprite;
 	public static var songPosBar:FlxBar;
 
@@ -190,6 +192,10 @@ class PlayState extends MusicBeatState
 	var scoreTxt:FlxText;
 	var replayTxt:FlxText;
 	var botPlayTxt:FlxText;
+
+	var bg:FlxSprite;
+	var fg:FlxSprite;
+	var table:FlxSprite;
 
 	public static var campaignScore:Int = 0;
 
@@ -635,9 +641,9 @@ class PlayState extends MusicBeatState
 			case 'lights-down':
 			{
 					curStage = 'mira';
-					var bg:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirabg'));
-					var fg:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirafg'));
-					var table:FlxSprite = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mira_table'));
+					bg = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirabg'));
+					fg = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirafg'));
+					table = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mira_table'));
 					bg.antialiasing = true;
 					table.antialiasing = true;
 					fg.antialiasing = true;
@@ -651,6 +657,16 @@ class PlayState extends MusicBeatState
 					add(bg);
 					add(fg);
 					add(table);
+					if(curStep == 256) {
+                        remove(bg);
+						remove(fg);
+						remove(table);
+					}
+					if(curStep == 512)  {
+                        add(bg);
+						add(fg);
+						add(table);
+					}
 			}
 			case 'milf' | 'satin-panties' | 'high':
 				{
@@ -2322,6 +2338,9 @@ class PlayState extends MusicBeatState
 		perfectMode = false;
 		#end
 
+		if(botPlayTxt.visible)
+			misses = 0;
+
 		if (executeModchart && lua != null && songStarted)
 		{
 			setVar('songPos', Conductor.songPosition);
@@ -3095,7 +3114,7 @@ class PlayState extends MusicBeatState
 		vocals.volume = 1;
 
 		if (curSong == 'Takeover')
-			health += 0.015;
+			health += 0.02;
 
 		var placement:String = Std.string(combo);
 
@@ -3835,6 +3854,74 @@ class PlayState extends MusicBeatState
 		gf.playAnim('scared', true);
 	}
 
+	function changeCharacter(char:String, newChar:String):Void 
+		{
+			switch (char.toLowerCase()) 
+			{
+				case "boyfriend":
+					remove(boyfriend);
+					boyfriend = new Boyfriend(boyfriend.x, boyfriend.y, newChar);
+					add(boyfriend);
+		
+				case "gf":
+					remove(gf);
+					gf = new Character(gf.x, gf.y, newChar);
+					add(gf);
+		
+				case "dad":
+					remove(dad);
+					dad = new Character(dad.x, dad.y, newChar);
+					add(dad);
+		
+				default:
+					trace("Invalid character name: " + char);
+			}
+		}
+
+	function lightSwitch(option:String):Void
+	{
+       if(option == "lightsdown") {
+		remove(bg);
+			remove(fg);
+			remove(table);
+				remove(boyfriend);
+				boyfriend = new Boyfriend(810, 500, 'bfwhite');
+				add(boyfriend);
+				remove(gf);
+				remove(dad);
+				dad = new Character(100, 100, 'whitegreen');
+				add(dad);
+	   }
+	   if(option == "lightsback")
+	   {
+		remove(boyfriend);
+				boyfriend = new Boyfriend(810, 500, 'bf');
+				gf = new Character(400, 130, 'gf');
+				remove(dad);
+				dad = new Character(100, 100, 'impostergreen');
+				curStage = 'mira';
+				bg = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirabg'));
+				fg = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mirafg'));
+				table = new FlxSprite(-1743, 114).loadGraphic(Paths.image('mira_table'));
+				bg.antialiasing = true;
+				table.antialiasing = true;
+				fg.antialiasing = true;
+				bg.scrollFactor.set(1, 1);
+				table.scrollFactor.set(1, 1);
+				fg.scrollFactor.set(1, 1);
+				bg.active = false;
+				table.active = false;
+				fg.active = false;
+				defaultCamZoom = 0.9;
+				add(bg);
+				add(fg);
+				add(table);
+				add(gf);
+				add(boyfriend);
+				add(dad);
+	   }
+	}
+
 	override function stepHit()
 	{
 		super.stepHit();
@@ -3853,6 +3940,34 @@ class PlayState extends MusicBeatState
 		{
 			// dad.dance();
 		}
+
+		if(SONG.song.toLowerCase() == 'lights-down') {
+		switch (curStep)
+		{
+			case 256:
+			    lightSwitch("lightsdown");
+			case 512:
+				lightSwitch("lightsback");
+			case 639:
+				lightSwitch("lightsdown");
+			case 799:
+				lightSwitch("lightsback");
+			case 820:
+				lightSwitch("lightsdown");
+			case 824:
+				lightSwitch("lightsback");
+			case 1216:
+				lightSwitch("lightsdown");
+			case 1445:
+				lightSwitch("lightsback");
+			case 1471:
+				lightSwitch("lightsdown");
+			case 1599:
+			    lightSwitch("lightsback");
+				remove(boyfriend);
+				remove(gf);
+		}
+	}
 
 		// yes this updates every step.
 		// yes this is bad
