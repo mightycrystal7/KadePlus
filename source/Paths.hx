@@ -99,6 +99,10 @@ class Paths
 			&& (Date.now().getDay() == 1 || Date.now().getDay() == 2)
 			&& Date.now().getMonth() == 3) //  0: january 1:february, 2: march, 3: april
 			key = "yeahyeahyeah";
+			if (key == "freakyMenu"
+				&& (Date.now().getDay() == 29 || Date.now().getDay() == 2)
+				&& Date.now().getMonth() == 4) //  0: january 1:february, 2: march, 3: april
+				key = "birthday";
 
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
