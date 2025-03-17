@@ -25,7 +25,7 @@ class PauseSubState extends substates.MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<objects.Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Options',  'Practice Mode', 'Toggle Botplay', 'Exit to menu'];
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
@@ -132,7 +132,7 @@ class PauseSubState extends substates.MusicBeatSubstate
 				{
 					grpMenuShit.clear();
 
-					menuItems = ['Restart Song', 'Exit to menu'];
+					menuItems = ['Restart Song', 'Options', 'Exit to menu'];
 
 					for (i in 0...menuItems.length)
 					{
@@ -157,7 +157,7 @@ class PauseSubState extends substates.MusicBeatSubstate
 				{
 					grpMenuShit.clear();
 
-					menuItems = ['Restart Song', 'Exit to menu'];
+					menuItems = ['Restart Song', 'Options', 'Exit to menu'];
 
 					for (i in 0...menuItems.length)
 					{
@@ -185,6 +185,12 @@ class PauseSubState extends substates.MusicBeatSubstate
 					close();
 				case "Restart Song":
 					FlxG.resetState();
+				case "Practice Mode":
+					states.PlayState.practiceMode = !states.PlayState.practiceMode;
+					states.PlayState.practiceModeWatermark.visible = !states.PlayState.practiceModeWatermark.visible;
+				case "Toggle Botplay":
+					states.PlayState.cpuControlled = !states.PlayState.cpuControlled;
+					states.PlayState.botPlayTxt.visible = !states.PlayState.botPlayTxt.visible;
 				case "Exit to menu":
 					PlayState.loadRep = false;
 					if (PlayState.lua != null)

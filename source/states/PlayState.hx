@@ -121,7 +121,7 @@ class PlayState extends MusicBeatState
 	var halloweenLevel:Bool = false;
 
 	var songLength:Float = 0;
-	var kadeEngineWatermark:FlxText;
+	public static var practiceModeWatermark:FlxText;
 
 	#if windows
 	// Discord RPC variables
@@ -157,6 +157,10 @@ class PlayState extends MusicBeatState
 	private var gfSpeed:Int = 1;
 	private var health:Float = 1;
 	private var combo:Int = 0;
+
+	// GAMEPLAY CHANGEABLES
+	public  static var cpuControlled:Bool = false;
+	public static var practiceMode:Bool = false;
 
 	public static var misses:Int = 0;
 
@@ -211,7 +215,7 @@ class PlayState extends MusicBeatState
 	var songScoreDef:Int = 0;
 	var scoreTxt:FlxText;
 	var replayTxt:FlxText;
-	var botPlayTxt:FlxText;
+	public static var botPlayTxt:FlxText;
 
 	var bg:FlxSprite;
 	var fg:FlxSprite;
@@ -1142,19 +1146,17 @@ class PlayState extends MusicBeatState
 		add(botPlayTxt);
 
 		// Add Kade Engine watermark
-		kadeEngineWatermark = new FlxText(4, healthBarBG.y
+		practiceModeWatermark = new FlxText(4, healthBarBG.y
 			+ 50, 0,
-			SONG.song
-			+ " "
-			+ (storyDifficulty == 2 ? "Hard" : storyDifficulty == 1 ? "Normal" : "Easy")
-			+ "KE+ v" + MainMenuState.plusVer,
+			"PRACTICE MODE",
 			16);
-		kadeEngineWatermark.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		kadeEngineWatermark.scrollFactor.set();
-		add(kadeEngineWatermark);
+		practiceModeWatermark.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		practiceModeWatermark.scrollFactor.set();
+		practiceModeWatermark.visible = practiceMode; // JUST NO;
+		add(practiceModeWatermark);
 
 		if (FlxG.save.data.downscroll)
-			kadeEngineWatermark.y = FlxG.height * 0.9 + 45;
+			practiceModeWatermark.y = FlxG.height * 0.9 + 45;
 
 		scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -1192,7 +1194,7 @@ class PlayState extends MusicBeatState
 			songPosBG.cameras = [camHUD];
 			songPosBar.cameras = [camHUD];
 		}
-		kadeEngineWatermark.cameras = [camHUD];
+		practiceModeWatermark.cameras = [camHUD];
 		if (loadRep)
 			replayTxt.cameras = [camHUD];
 
@@ -2402,7 +2404,7 @@ class PlayState extends MusicBeatState
 			if (getVar("showOnlyStrums", 'bool'))
 			{
 				healthBarBG.visible = false;
-				kadeEngineWatermark.visible = false;
+				practiceModeWatermark.visible = false;
 				healthBar.visible = false;
 				iconP1.visible = false;
 				iconP2.visible = false;
@@ -2411,7 +2413,7 @@ class PlayState extends MusicBeatState
 			else
 			{
 				healthBarBG.visible = true;
-				kadeEngineWatermark.visible = true;
+				practiceModeWatermark.visible = true;
 				healthBar.visible = true;
 				iconP1.visible = true;
 				iconP2.visible = true;
@@ -2558,6 +2560,12 @@ class PlayState extends MusicBeatState
 			+ truncateFloat(accuracy, 2)
 			+ " %"
 			+ updateComboImposterTwo();
+		}
+		if (practiceMode) {
+			songScore = 0;
+			misses = 0;
+			accuracy = 0;
+			scoreTxt.text = 'PRACTICE';
 		}
 			
 		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
@@ -2886,7 +2894,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (health <= 0)
+		if (health <= 0 && !practiceMode)
 		{
 			boyfriend.stunned = true;
 
@@ -4091,8 +4099,6 @@ class PlayState extends MusicBeatState
 	{
 		return FlxSort.byValues(Order, Obj1.strumTime, Obj2.strumTime);
 	}
-
-	public var cpuControlled:Bool = FlxG.save.data.cpuControlled;
 
 	override function beatHit()
 	{

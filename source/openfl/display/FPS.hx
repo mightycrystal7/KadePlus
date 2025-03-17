@@ -90,8 +90,8 @@ class FPS extends TextField
 			text += "\nMemory: " + memoryMegas + " MB";
 			#end
 
-			text += "\nKE v1.8.1";
-			text += "\nKE+ v1.0-prerelease";
+			text += "\nKE v1.4.2c";
+			text += "\nKE+ v1.0";
 
 			//textColor = 0xFFFFFFFF;
 			if (memoryMegas > 3000 || currentFPS <= FlxG.save.data.fps / 2)

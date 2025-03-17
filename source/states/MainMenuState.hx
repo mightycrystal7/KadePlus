@@ -38,8 +38,8 @@ class MainMenuState extends MusicBeatState
 
 	public static var nightly:String = "";
 
-	public static var kadeEngineVer:String = "1.8.1";
-	public static var plusVer:String = "1.0p";
+	public static var kadeEngineVer:String = "1.4.2c";
+	public static var plusVer:String = "1.0";
 	public static var gameVer:String = "0.2.8";
 
 	var magenta:FlxSprite;

@@ -25,7 +25,6 @@ class OptionsMenu extends states.MusicBeatState
 		new OptionCatagory("Gameplay", [
 			new DFJKOption(controls),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
-			new BotPlay("If the game should play the song for you. (Score nor Accuary n' Misses will be saved)"),
 			#if desktop
 			new FPSCapOption("Cap your FPS (Left for -10, Right for +10. SHIFT to go faster)"),
 			#end
