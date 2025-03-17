@@ -28,7 +28,7 @@ import backend.Conductor;
 import objects.BackgroundDancer;
 
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 #end
 
 #if desktop

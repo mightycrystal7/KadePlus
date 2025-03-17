@@ -79,7 +79,7 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 #end
 #if desktop
 import Sys;
@@ -1197,6 +1197,12 @@ class PlayState extends MusicBeatState
 		practiceModeWatermark.cameras = [camHUD];
 		if (loadRep)
 			replayTxt.cameras = [camHUD];
+
+		if(SONG.song.toLowerCase() == "lights-down")
+		{
+			Paths.image("characters/whitegreen");
+			Paths.image("characters/bfwhite");
+		}
 
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;
@@ -3041,7 +3047,7 @@ class PlayState extends MusicBeatState
 				// Kill extremely late notes and cause misses
 				if (Conductor.songPosition - daNote?.strumTime > noteKillOffset)
 				{
-					if (daNote.mustPress && !false && !daNote.ignoreNote && (daNote.tooLate || !daNote.wasGoodHit))
+					if (daNote.mustPress && !cpuControlled && !daNote.ignoreNote && (daNote.tooLate || !daNote.wasGoodHit) )
 						noteMiss(daNote.noteData, daNote);
 
 					daNote.active = daNote.visible = false;

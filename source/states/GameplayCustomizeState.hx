@@ -5,7 +5,7 @@ import flixel.FlxCamera;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 import sys.thread.Thread;
 #end
 

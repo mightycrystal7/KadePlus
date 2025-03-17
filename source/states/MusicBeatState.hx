@@ -1,7 +1,7 @@
 package states;
 
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 #end
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;

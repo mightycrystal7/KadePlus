@@ -15,7 +15,7 @@ import lime.app.Application;
 import options.OptionsMenu;
 
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 #end
 
 using StringTools;

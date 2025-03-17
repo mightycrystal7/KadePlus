@@ -18,7 +18,7 @@ import backend.Highscore;
 import backend.Song;
 
 #if windows
-import Discord.DiscordClient;
+import backend.Discord.DiscordClient;
 #end
 
 using StringTools;
