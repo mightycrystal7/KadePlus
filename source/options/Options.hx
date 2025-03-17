@@ -8,9 +8,8 @@ import openfl.display.FPS;
 import openfl.Lib;
 import backend.Conductor;
 import backend.Song;
-// other
-import other.LoadReplayState;
-import other.GameplayCustomizeState;
+import states.LoadReplayState;
+import states.GameplayCustomizeState;
 
 import backend.Highscore;
 

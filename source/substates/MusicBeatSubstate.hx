@@ -5,7 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import controls.Controls;
 import backend.Conductor;
-import other.PlayerSettings;
+import options.PlayerSettings;
 
 class MusicBeatSubstate extends FlxSubState
 {

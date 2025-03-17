@@ -1,4 +1,4 @@
-package other;
+package states;
 
 import controls.Controls.KeyboardScheme;
 import controls.Controls.Control;

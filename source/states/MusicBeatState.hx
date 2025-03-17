@@ -24,7 +24,7 @@ class MusicBeatState extends FlxUIState
 	private var controls(get, never):controls.Controls;
 
 	inline function get_controls():controls.Controls
-		return other.PlayerSettings.player1.controls;
+		return options.PlayerSettings.player1.controls;
 
 	override function create()
 	{

@@ -1,4 +1,4 @@
-package;
+package states;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -25,7 +25,7 @@ import openfl.Assets;
 import states.MainMenuState;
 import objects.Alphabet;
 import backend.Conductor;
-import other.BackgroundDancer;
+import objects.BackgroundDancer;
 
 #if windows
 import Discord.DiscordClient;
@@ -67,7 +67,7 @@ class TitleState extends states.MusicBeatState
 			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
 		}
 		
-		other.PlayerSettings.init();
+		options.PlayerSettings.init();
 
 		#if windows
 		DiscordClient.initialize();
