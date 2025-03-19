@@ -25,11 +25,12 @@ class PauseSubState extends substates.MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<objects.Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Options',  'Practice Mode', 'Toggle Botplay', 'Exit to menu'];
+	var menuItems:Array<String> = ['Resume', 'Restart Song',  'Practice Mode', 'Toggle Botplay', 'Options', 'Exit to menu'];
 	var curSelected:Int = 0;
 
 	var pauseMusic:FlxSound;
 	var perSongOffset:FlxText;
+	var wow:Bool = false;
 	
 	var offsetChanged:Bool = false;
 
@@ -191,6 +192,9 @@ class PauseSubState extends substates.MusicBeatSubstate
 				case "Toggle Botplay":
 					states.PlayState.cpuControlled = !states.PlayState.cpuControlled;
 					states.PlayState.botPlayTxt.visible = !states.PlayState.botPlayTxt.visible;
+				case "Options":
+					FlxG.switchState(new options.OptionsMenu());
+                    options.OptionsMenu.onPlayState = true;
 				case "Exit to menu":
 					PlayState.loadRep = false;
 					if (PlayState.lua != null)

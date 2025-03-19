@@ -15,11 +15,13 @@ import flixel.util.FlxColor;
 import lime.utils.Assets;
 import objects.Alphabet;
 import states.MainMenuState;
+import flixel.system.FlxSound;
 
 class OptionsMenu extends states.MusicBeatState
 {
 	var selector:FlxText;
 	var curSelected:Int = 0;
+	var pauseMusic:FlxSound;
 
 	var options:Array<OptionCatagory> = [
 		new OptionCatagory("Gameplay", [
@@ -61,6 +63,8 @@ class OptionsMenu extends states.MusicBeatState
 	override function create()
 	{
 		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menuDesat"));
+		if(onPlayState)
+		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
 
 		menuBG.color = 0xFFea71fd;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
@@ -92,6 +96,8 @@ class OptionsMenu extends states.MusicBeatState
 	}
 
 	var isCat:Bool = false;
+	public static var onPlayState:Bool = false;
+	var _song:backend.Song.SwagSong;
 
 	public static function truncateFloat(number:Float, precision:Int):Float
 	{
@@ -105,8 +111,17 @@ class OptionsMenu extends states.MusicBeatState
 	{
 		super.update(elapsed);
 
+		if (states.PlayState.SONG != null)
+			_song = states.PlayState.SONG;
+
 		if (controls.BACK && !isCat) {
+			if(!onPlayState) {
 			FlxG.switchState(new MainMenuState());
+			} else {
+				states.PlayState.SONG = _song;
+				FlxG.sound.music.stop();
+				FlxG.switchState(new states.PlayState());
+			}
 		    FlxG.save.flush();
 		}
 		else if (controls.BACK)
