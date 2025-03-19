@@ -2927,8 +2927,7 @@ class PlayState extends MusicBeatState
 				boyfriend.dance();
 			}
 		}
-		if (!inCutscene && !cpuControlled)
-			keyShit();
+		
 
 		super.update(elapsed);
 		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
@@ -2954,7 +2953,10 @@ class PlayState extends MusicBeatState
 			iconP2.animation.curAnim.curFrame = 1;
 		else
 			iconP2.animation.curAnim.curFrame = 0;
-		
+
+		if (!inCutscene && !cpuControlled)
+			keyShit();
+
 		if (generatedMusic)
 		{
 			notes.forEachAlive(function(daNote:Note)

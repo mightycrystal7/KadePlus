@@ -12,7 +12,7 @@ class StrumNote extends FlxSprite
 	public var defaultX:Float = 50;
 
 	/**
-	 * Plays the specified animation and centers the offsets and origin.
+	 * Plays the specified animation and cen ters the offsets and origin.
 	 * 
 	 * @param anim The name of the animation to play.
 	 * @param force Whether to force the animation to play.
