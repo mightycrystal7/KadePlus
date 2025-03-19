@@ -14,7 +14,6 @@ import flixel.util.FlxColor;
 import lime.app.Application;
 import options.OptionsMenu;
 import objects.Character;
-
 #if windows
 import backend.Discord.DiscordClient;
 #end
@@ -45,7 +44,7 @@ class MainMenuState extends MusicBeatState
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
-	private var char1:FlxSprite;
+	private var char1:Character;
 
 	override function create()
 	{
@@ -88,6 +87,11 @@ class MainMenuState extends MusicBeatState
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
 
+		Paths.setCurrentLevel("week1");
+		char1 = new Character(FlxG.width / 2 + 100, FlxG.height / 2 - 100, "bf", true);
+		char1.scrollFactor.set();
+		add(char1);
+
 		var tex = Paths.getSparrowAtlas('FNF_main_menu_assets');
 
 		for (i in 0...optionShit.length)
@@ -115,7 +119,6 @@ class MainMenuState extends MusicBeatState
 
 		// NG.core.calls.event.logEvent('swag').send();
 
-
 		if (FlxG.save.data.dfjk)
 			controls.setKeyboardScheme(KeyboardScheme.Solo, true);
 		else
@@ -135,91 +138,82 @@ class MainMenuState extends MusicBeatState
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		if (optionShit[curSelected] == 'story mode')
-		{
-			changeItem(-1);
-			changeItem(1);
-
-			char1.dance();
-			char1.updateHitbox();
-			char1.visible = true;
-		} else {
-			char1.visible = false;
-		}
-
-		if (!selectedSomethin)
-		{
-			if (controls.UP_P)
+		char1.visible = optionShit[curSelected] == 'story mode';
+		if (char1.visible && !selectedSomethin)
+			if (!selectedSomethin)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeItem(-1);
-			}
-
-			if (controls.DOWN_P)
-			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeItem(1);
-			}
-
-			if (controls.BACK)
-			{
-				FlxG.switchState(new TitleState());
-			}
-
-			if (controls.ACCEPT)
-			{
-				if (optionShit[curSelected] == 'donate')
+				if (controls.UP_P)
 				{
-					#if linux
-					Sys.command('/usr/bin/xdg-open', ["https://ninja-muffin24.itch.io/funkin", "&"]);
-					#else
-					FlxG.openURL('https://ninja-muffin24.itch.io/funkin');
-					#end
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeItem(-1);
 				}
-				else
+
+				if (controls.DOWN_P)
 				{
-					selectedSomethin = true;
-					FlxG.sound.play(Paths.sound('confirmMenu'));
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeItem(1);
+				}
 
-					FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+				if (controls.BACK)
+				{
+					FlxG.switchState(new TitleState());
+				}
 
-					menuItems.forEach(function(spr:FlxSprite)
+				if (controls.ACCEPT)
+				{
+					if (optionShit[curSelected] == 'donate')
 					{
-						if (curSelected != spr.ID)
+						#if linux
+						Sys.command('/usr/bin/xdg-open', ["https://ninja-muffin24.itch.io/funkin", "&"]);
+						#else
+						FlxG.openURL('https://ninja-muffin24.itch.io/funkin');
+						#end
+					}
+					else
+					{
+						char1.playAnim("hey", true);
+						selectedSomethin = true;
+						FlxG.sound.play(Paths.sound('confirmMenu'));
+
+						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
+
+						menuItems.forEach(function(spr:FlxSprite)
 						{
-							FlxTween.tween(spr, {alpha: 0}, 1.3, {
-								ease: FlxEase.quadOut,
-								onComplete: function(twn:FlxTween)
-								{
-									spr.kill();
-								}
-							});
-						}
-						else
-						{
-							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+							if (curSelected != spr.ID)
 							{
-								var daChoice:String = optionShit[curSelected];
-
-								switch (daChoice)
+								FlxTween.tween(spr, {alpha: 0}, 1.3, {
+									ease: FlxEase.quadOut,
+									onComplete: function(twn:FlxTween)
+									{
+										spr.kill();
+									}
+								});
+							}
+							else
+							{
+								FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
 								{
-									case 'story mode':
-										FlxG.switchState(new StoryMenuState());
-										trace("Story Menu Selected");
-									case 'freeplay':
-										FlxG.switchState(new FreeplayState());
+									var daChoice:String = optionShit[curSelected];
 
-										trace("Freeplay Menu Selected");
+									switch (daChoice)
+									{
+										case 'story mode':
+											FlxG.switchState(new StoryMenuState());
+											trace("Story Menu Selected");
+										case 'freeplay':
+											FlxG.switchState(new FreeplayState());
 
-									case 'options':
-										FlxG.switchState(new OptionsMenu());
-								}
-							});
-						}
-					});
+											trace("Freeplay Menu Selected");
+
+										case 'options':
+											FlxG.switchState(new OptionsMenu());
+									}
+								});
+							}
+						});
+					}
 				}
 			}
-		}
 
 		super.update(elapsed);
 
