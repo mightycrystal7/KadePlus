@@ -26,11 +26,9 @@ import states.MainMenuState;
 import objects.Alphabet;
 import backend.Conductor;
 import objects.BackgroundDancer;
-
 #if windows
 import backend.Discord.DiscordClient;
 #end
-
 #if desktop
 import sys.thread.Thread;
 #end
@@ -56,7 +54,7 @@ class TitleState extends states.MusicBeatState
 		#if polymod
 		polymod.Polymod.init({modRoot: "mods", dirs: ['introMod']});
 		#end
-		
+
 		#if sys
 		if (!sys.FileSystem.exists(Sys.getCwd() + "/assets/replays"))
 			sys.FileSystem.createDirectory(Sys.getCwd() + "/assets/replays");
@@ -66,16 +64,16 @@ class TitleState extends states.MusicBeatState
 		{
 			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
 		}
-		
+
 		options.PlayerSettings.init();
 
 		#if windows
 		DiscordClient.initialize();
 
-		Application.current.onExit.add (function (exitCode) {
+		Application.current.onExit.add(function(exitCode)
+		{
 			DiscordClient.shutdown();
-		 });
-		 
+		});
 		#end
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
@@ -83,8 +81,6 @@ class TitleState extends states.MusicBeatState
 		// DEBUG BULLSHIT
 
 		super.create();
-
-
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 
@@ -131,8 +127,8 @@ class TitleState extends states.MusicBeatState
 			diamond.persist = true;
 			diamond.destroyOnNoUse = false;
 
-			FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1), {asset: diamond, width: 32, height: 32},
-				new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
+			FlxTransitionableState.defaultTransIn = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, -1),
+				{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 			FlxTransitionableState.defaultTransOut = new TransitionData(FADE, FlxColor.BLACK, 0.5, new FlxPoint(0, 1),
 				{asset: diamond, width: 32, height: 32}, new FlxRect(-200, -200, FlxG.width * 1.4, FlxG.height * 1.4));
 
@@ -153,7 +149,6 @@ class TitleState extends states.MusicBeatState
 		}
 
 		backend.Conductor.changeBPM(102);
-		persistentUpdate = true;
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		// bg.antialiasing = true;
@@ -285,7 +280,6 @@ class TitleState extends states.MusicBeatState
 
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
-
 			titleText.animation.play('press');
 
 			FlxG.camera.flash(FlxColor.WHITE, 1);
@@ -296,31 +290,32 @@ class TitleState extends states.MusicBeatState
 
 			new FlxTimer().start(2, function(tmr:FlxTimer)
 			{
-
 				// Get current version of Kade Engine
 
 				var http = new haxe.Http("https://raw.githubusercontent.com/mightycrystal7/KadePlus/main/version.downloadMe");
 
-				http.onData = function (data:String) {
-                  
+				http.onData = function(data:String)
+				{
 					if (data.trim() > states.MainMenuState.plusVer)
-				  {
-					  trace('outdated lmao! ' + data.trim() + ' != ' + states.MainMenuState.plusVer);
-					  substates.OutdatedSubState.needVer = data;
-					  FlxG.switchState(new substates.OutdatedSubState());
-					  trace("not the version you need");
-				  } else {
-					  FlxG.switchState(new MainMenuState());
-				  }
-			  }
-				
-				http.onError = function (error) {
-				  trace('error: $error');
-				  FlxG.switchState(new MainMenuState()); // fail but we go anyway
+					{
+						trace('outdated lmao! ' + data.trim() + ' != ' + states.MainMenuState.plusVer);
+						substates.OutdatedSubState.needVer = data;
+						FlxG.switchState(new substates.OutdatedSubState());
+						trace("not the version you need");
+					}
+					else
+					{
+						FlxG.switchState(new MainMenuState());
+					}
 				}
-				
-				http.request();
 
+				http.onError = function(error)
+				{
+					trace('error: $error');
+					FlxG.switchState(new MainMenuState()); // fail but we go anyway
+				}
+
+				http.request();
 			});
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
@@ -366,15 +361,19 @@ class TitleState extends states.MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
+		try {
 
-		logoBl.animation.play('bump');
+		if (logoBl != null)
+			logoBl.animation.play('bump');
 		danceLeft = !danceLeft;
 
-		if (danceLeft)
-			gfDance.animation.play('danceRight');
-		else
-			gfDance.animation.play('danceLeft');
-
+		if (gfDance != null)
+		{
+			if (danceLeft)
+				gfDance.animation.play('danceRight');
+			else
+				gfDance.animation.play('danceLeft');
+		}
 		FlxG.log.add(curBeat);
 
 		switch (curBeat)
@@ -435,6 +434,8 @@ class TitleState extends states.MusicBeatState
 			case 16:
 				skipIntro();
 		}
+	} 
+	catch(e:Dynamic) {}
 	}
 
 	var skippedIntro:Bool = false;

@@ -1,13 +1,13 @@
 package;
 
-import openfl.display.BlendMode;
-import openfl.text.TextFormat;
-import openfl.display.Application;
+import objects.FunkinGame;
+#if polymod
+import mods.PolymodHandler;
+#end
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
-import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
@@ -30,8 +30,7 @@ class Main extends Sprite
 
 	public static function main():Void
 	{
-
-		// quick checks 
+		// quick checks
 
 		Lib.current.addChild(new Main());
 	}
@@ -77,24 +76,26 @@ class Main extends Sprite
 		#if !debug
 		initialState = TitleState;
 		#end
+		#if polymod
+		PolymodHandler.init();
+		#end
 
-		game = new FlxGame(gameWidth, gameHeight, initialState, #if (flixel <= "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
-
+		game = new FunkinGame(gameWidth, gameHeight, initialState, #if (flixel <= "5.0.0") zoom, #end framerate, framerate, skipSplash, startFullscreen);
 		addChild(game);
 
 		#if !mobile
 		fpsCounter = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsCounter);
 		toggleFPS(FlxG.save.data.fps);
-
 		#end
 	}
 
-	var game:FlxGame;
+	var game:FunkinGame;
 
 	var fpsCounter:FPS;
 
-	public function toggleFPS(fpsEnabled:Bool):Void {
+	public function toggleFPS(fpsEnabled:Bool):Void
+	{
 		fpsCounter.visible = fpsEnabled;
 	}
 

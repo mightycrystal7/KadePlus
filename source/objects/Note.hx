@@ -39,6 +39,8 @@ class Note extends FlxSprite
 	public static var RED_NOTE:Int = 3;
 
 	public var rating:String = "shit";
+	public var offsetX:Float = 0;
+	public var offsetY:Float = 0;
 
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false)
 	{

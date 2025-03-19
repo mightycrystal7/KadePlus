@@ -13,10 +13,32 @@ class Paths
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 
 	static var currentLevel:String;
+	public static var localTrackedAssets:Array<String> = [];
 
 	static public function setCurrentLevel(name:String)
 	{
 		currentLevel = name.toLowerCase();
+	}
+
+	public static function clearStoredMemory()
+	{
+		// clear anything not in the tracked assets list
+		@:privateAccess
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+			if (obj != null)
+			{
+				openfl.Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
+				obj.destroy();
+				bitmapCache.remove(key);
+			}
+		}
+
+		// flags everything to be cleared out next unused memory clear
+		localTrackedAssets = [];
+		#if !html5 openfl.Assets.cache.clear("songs"); #end
 	}
 
 	static function getPath(file:String, type:AssetType, library:Null<String>)
@@ -88,6 +110,23 @@ class Paths
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
 	}
 
+	inline public static function dumpAndRemoveBitmaps()
+	{
+		for (bitmapKey in bitmapCache.keys())
+		{
+			@:privateAccess
+			if (FlxG.bitmap._cache.exists(bitmapKey))
+			{
+				var keyGraphic = bitmapCache.get(bitmapKey);
+				var keyBitmap = keyGraphic.bitmap;
+				Assets.cache.removeBitmapData(bitmapKey);
+				keyGraphic.destroy();
+				keyGraphic = null;
+				FlxG.bitmap._cache.remove(bitmapKey);
+			}
+		}
+	}
+
 	inline static public function soundRandom(key:String, min:Int, max:Int, ?library:String)
 	{
 		return sound(key + FlxG.random.int(min, max), library);
@@ -99,10 +138,10 @@ class Paths
 			&& (Date.now().getDay() == 1 || Date.now().getDay() == 2)
 			&& Date.now().getMonth() == 3) //  0: january 1:february, 2: march, 3: april
 			key = "yeahyeahyeah";
-			if (key == "freakyMenu"
-				&& (Date.now().getDay() == 29 || Date.now().getDay() == 2)
-				&& Date.now().getMonth() == 4) //  0: january 1:february, 2: march, 3: april
-				key = "birthday";
+		if (key == "freakyMenu"
+			&& (Date.now().getDay() == 29 || Date.now().getDay() == 2)
+			&& Date.now().getMonth() == 4) //  0: january 1:february, 2: march, 3: april
+			key = "birthday";
 
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
@@ -111,7 +150,7 @@ class Paths
 
 	inline static public function cacheBitmap(key:String, ?library:String)
 	{
-		var path = img(key);
+		var path = img(key, library);
 		if (bitmapCache.exists(path))
 			return bitmapCache.get(path);
 		if (Assets.exists(path))
