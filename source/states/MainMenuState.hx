@@ -14,6 +14,7 @@ import flixel.util.FlxColor;
 import lime.app.Application;
 import options.OptionsMenu;
 import objects.Character;
+import flixel.util.FlxTimer;
 #if windows
 import backend.Discord.DiscordClient;
 #end
@@ -177,7 +178,6 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
@@ -193,7 +193,7 @@ class MainMenuState extends MusicBeatState
 						}
 						else
 						{
-							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+							new FlxTimer().start(1, function(timer:FlxTimer)
 							{
 								var daChoice:String = optionShit[curSelected];
 
