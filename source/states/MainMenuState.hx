@@ -13,6 +13,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import lime.app.Application;
 import options.OptionsMenu;
+import objects.Character;
 
 #if windows
 import backend.Discord.DiscordClient;
@@ -44,6 +45,7 @@ class MainMenuState extends MusicBeatState
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
+	private var char1:FlxSprite;
 
 	override function create()
 	{
@@ -96,7 +98,9 @@ class MainMenuState extends MusicBeatState
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
-			menuItem.screenCenter(X);
+			menuItem.x += 150;
+			menuItem.setGraphicSize(Std.int(menuItem.width * 0.70));
+			// menuItem.screenCenter(X);
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set();
 			menuItem.antialiasing = true;
@@ -129,6 +133,18 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+		}
+
+		if (optionShit[curSelected] == 'story mode')
+		{
+			changeItem(-1);
+			changeItem(1);
+
+			char1.dance();
+			char1.updateHitbox();
+			char1.visible = true;
+		} else {
+			char1.visible = false;
 		}
 
 		if (!selectedSomethin)
@@ -209,7 +225,7 @@ class MainMenuState extends MusicBeatState
 
 		menuItems.forEach(function(spr:FlxSprite)
 		{
-			spr.screenCenter(X);
+			// spr.screenCenter(X);
 		});
 	}
 
