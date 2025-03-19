@@ -1,0 +1,8 @@
+import mods.Module;
+import states.PlayState;
+
+class Example extends Module {
+    public function onStateDestroy(event:StateDestroyEvent) { // more will be added later
+ 		trace('Hi! I just destroyed ' + event.stateName + "!");
+    }
+}
