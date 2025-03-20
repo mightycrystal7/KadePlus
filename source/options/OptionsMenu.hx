@@ -43,6 +43,7 @@ class OptionsMenu extends states.MusicBeatState
 			new RainbowFPSOption("Make the FPS Counter Rainbow (Only works with the FPS Counter toggeled on)"),
 			#end
 			new AccuracyOption("Display accuracy information."),
+			new NoFps("Choose between complex fps or just a watermark"),
 			new NPSDisplayOption("Shows your current Notes Per Second.")
 		]),
 		new OptionCatagory("Misc", [

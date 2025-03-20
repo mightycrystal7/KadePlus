@@ -400,6 +400,27 @@ class RainbowFPSOption extends Option
 	}
 }
 
+class NoFps extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.nofps = !FlxG.save.data.nofps;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Upper Left Text " + (!FlxG.save.data.nofps ? "FPS" : "Watermark");
+	}
+}
+
 class NPSDisplayOption extends Option
 {
 	public function new(desc:String)
